@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master Cars — تأجير السيارات</title>
+<style>
+  @font-face{font-family:'Tajawal';font-weight:400;font-display:swap;src:url(fonts/tajawal-latin-400.woff2) format('woff2')}
+  @font-face{font-family:'Tajawal';font-weight:400;font-display:swap;src:url(fonts/tajawal-arabic-400.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+  @font-face{font-family:'Tajawal';font-weight:500;font-display:swap;src:url(fonts/tajawal-latin-500.woff2) format('woff2')}
+  @font-face{font-family:'Tajawal';font-weight:500;font-display:swap;src:url(fonts/tajawal-arabic-500.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+  @font-face{font-family:'Tajawal';font-weight:700;font-display:swap;src:url(fonts/tajawal-latin-700.woff2) format('woff2')}
+  @font-face{font-family:'Tajawal';font-weight:700;font-display:swap;src:url(fonts/tajawal-arabic-700.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+  @font-face{font-family:'Tajawal';font-weight:800;font-display:swap;src:url(fonts/tajawal-latin-800.woff2) format('woff2')}
+  @font-face{font-family:'Tajawal';font-weight:800;font-display:swap;src:url(fonts/tajawal-arabic-800.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+  :root{
+    --bg:#e9edf4; --surface:#ffffff; --ink:#0f1729; --ink2:#354155; --muted:#697488;
+    --line:#e4e9f1; --line2:#f1f4f9; --brand:#0f172a; --brand-h:#1e293b;
+    --blue:#2f6bff; --bluebg:#e9effe; --green:#0f9d58; --greenbg:#e6f6ee;
+    --red:#e11d48; --redbg:#fdeaee; --amber:#d97706; --amberbg:#fdf1e1; --indigo:#4f46e5; --indigobg:#ecebfd;
+    --grad:linear-gradient(135deg,#3b7bff 0%,#2350e6 100%);
+    --nav:linear-gradient(180deg,#1a2438 0%,#0b1120 100%);
+    --r:18px; --r-sm:12px;
+    --sh:0 1px 2px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04);
+    --sh-lg:0 18px 44px rgba(15,23,42,.16);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Tajawal',-apple-system,"Segoe UI",Tahoma,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.55;font-size:15px;
+    background-image:radial-gradient(900px 520px at 100% -8%,#e3ebfb 0%,transparent 55%),radial-gradient(760px 520px at -5% 2%,#edf0f7 0%,transparent 52%)}
+  h1,h2,h3{margin:0}
+
+  /* ===== sidebar drawer ===== */
+  .sidebar{position:fixed;inset-block:0;inset-inline-start:0;width:264px;background:var(--nav);
+    border-inline-end:none;display:flex;flex-direction:column;padding:20px 16px;z-index:40;transition:transform .25s ease}
+  .s-brand{display:flex;align-items:center;gap:12px;padding:6px 8px 18px;border-bottom:1px solid rgba(255,255,255,.09)}
+  .s-logo{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
+    background:var(--grad);color:#fff;font-weight:800;font-size:16px;letter-spacing:.5px;box-shadow:0 6px 18px rgba(47,107,255,.45)}
+  .s-brand h1{font-size:16px;font-weight:800;letter-spacing:.2px;color:#fff}
+  .s-brand small{color:rgba(255,255,255,.5);font-size:11.5px}
+  .s-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.6px;padding:18px 10px 8px}
+  .s-nav{display:flex;flex-direction:column;gap:3px}
+  .s-nav button{display:flex;align-items:center;gap:12px;width:100%;text-align:right;padding:12px 13px;
+    border:none;background:transparent;border-radius:12px;cursor:pointer;color:rgba(255,255,255,.62);
+    font-weight:600;font-size:14.5px;font-family:inherit;transition:.14s}
+  .s-nav button .ic{width:19px;height:19px;flex:none}
+  .s-nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+  .s-nav button.active{background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(47,107,255,.4)}
+  .s-foot{margin-top:auto;padding:14px;background:rgba(255,255,255,.06);border-radius:14px;font-size:12px;color:rgba(255,255,255,.55)}
+  .s-foot b{color:#fff;display:block;margin-bottom:4px;font-size:13px}
+  .s-foot .dot{color:rgba(255,255,255,.3);margin:0 4px}
+
+  .backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:35}
+  .backdrop.show{display:block}
+  .topbar{display:none;position:sticky;top:0;z-index:30;background:var(--surface);
+    border-bottom:1px solid var(--line);padding:11px 16px;align-items:center;gap:12px}
+  .burger{width:40px;height:40px;border:1px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;display:grid;place-items:center}
+
+  /* ===== main ===== */
+  main{margin-inline-start:260px;padding:30px 36px 60px;max-width:1240px}
+  .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+  .head-row h2{font-size:24px;font-weight:800;letter-spacing:-.2px}
+  .head-row p{color:var(--muted);font-size:14px;margin-top:4px}
+  .tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .search{position:relative}
+  .search svg{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+  .search input{width:230px;padding:11px 38px 11px 14px;border:1px solid var(--line);border-radius:11px;
+    background:var(--surface);font-family:inherit;font-size:14px;box-shadow:var(--sh)}
+  .search input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+  .segment{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:4px;box-shadow:var(--sh)}
+  .segment button{border:none;background:transparent;padding:8px 14px;border-radius:8px;cursor:pointer;
+    font-family:inherit;font-weight:700;font-size:13px;color:var(--muted)}
+  .segment button.active{background:var(--brand);color:#fff}
+
+  /* ===== KPI stat cards ===== */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh);
+    display:flex;align-items:center;gap:14px;transition:.16s}
+  .kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+  .kpi .ic{width:46px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center}
+  .kpi .ic svg{width:22px;height:22px}
+  .kpi .n{font-size:26px;font-weight:800;line-height:1.1}
+  .kpi .l{font-size:12.5px;color:var(--muted);font-weight:600}
+  .ic.blue{background:var(--bluebg);color:var(--blue)} .ic.green{background:var(--greenbg);color:var(--green)}
+  .ic.red{background:var(--redbg);color:var(--red)} .ic.indigo{background:var(--indigobg);color:var(--indigo)}
+
+  /* ===== fleet grid ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .car{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:var(--sh);transition:.16s}
+  .car:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);border-color:#d3dae4}
+  .thumb{position:relative;aspect-ratio:16/10;background:var(--line2);overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .tag{position:absolute;top:12px;inset-inline-start:12px;padding:6px 12px;border-radius:999px;
+    font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .tag.free{background:#fff;color:var(--green)} .tag.busy{background:#fff;color:var(--red)}
+  .c-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
+  .eyebrow{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase}
+  .car h3{font-size:18px;font-weight:800;margin:4px 0 12px}
+  .feat{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .feat span{display:inline-flex;align-items:center;gap:5px;background:var(--line2);color:var(--ink2);
+    font-size:12px;font-weight:600;padding:5px 10px;border-radius:8px}
+  .c-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line2);
+    display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+  .c-foot .price b{font-size:22px;font-weight:800} .c-foot .price span{font-size:12.5px;color:var(--muted);margin-inline-start:4px}
+  .c-actions{display:grid;grid-template-columns:1fr auto;gap:8px}
+
+  .btn{border:1px solid var(--line);cursor:pointer;border-radius:11px;padding:11px 16px;font-weight:700;font-size:14px;
+    background:var(--surface);color:var(--ink);transition:.12s;font-family:inherit;white-space:nowrap;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .btn:hover{background:var(--line2)}
+  .btn.primary{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(47,107,255,.28)}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.danger{color:var(--red);border-color:var(--line)} .btn.danger:hover{background:var(--redbg)}
+  .btn.sm{padding:8px 13px;font-size:13px} .btn.block{width:100%}
+  .btn .ic{width:16px;height:16px}
+
+  /* ===== table ===== */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:680px}
+  th,td{padding:15px 18px;text-align:right}
+  th{color:var(--muted);font-weight:700;font-size:12px;background:var(--line2);border-bottom:1px solid var(--line);letter-spacing:.2px}
+  tbody tr{border-bottom:1px solid var(--line2)} tbody tr:last-child{border-bottom:none}
+  tbody tr:hover{background:var(--line2)}
+  td b{font-weight:700}
+  .pill{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:6px}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .empty{padding:56px 20px;text-align:center;color:var(--muted)}
+  .empty svg{width:40px;height:40px;opacity:.4;margin-bottom:10px}
+
+  /* ===== forms ===== */
+  label{display:block;font-size:13px;color:var(--ink2);margin:0 0 6px;font-weight:700}
+  .field{margin-bottom:14px}
+  input,select{width:100%;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface);
+    border:1px solid var(--line);color:var(--ink);font-size:15px;font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+  input[type=file]{padding:9px 12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  .contract-grid{display:grid;grid-template-columns:1.35fr .95fr;gap:22px;align-items:start}
+  .agents-grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:22px;align-items:start}
+  .pw{font-family:ui-monospace,Menlo,monospace;letter-spacing:1px;color:var(--ink2)}
+  .form-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:var(--sh)}
+  .card-title{font-size:15px;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line2);
+    display:flex;align-items:center;gap:9px}
+  .card-title .ic{width:18px;height:18px;color:var(--muted)}
+
+  /* ===== live preview ===== */
+  .preview{position:sticky;top:24px;display:flex;flex-direction:column;gap:14px}
+  .p-doc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+  .p-head{background:var(--brand);color:#fff;padding:18px 20px;display:flex;align-items:center;gap:12px}
+  .p-head .p-logo{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-weight:800;font-size:14px}
+  .p-head b{font-size:15px;font-weight:800} .p-head small{color:rgba(255,255,255,.7);font-size:11.5px}
+  .p-body{padding:8px 20px 18px}
+  .p-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .p-row span{color:var(--muted)} .p-row b{font-weight:700;text-align:left}
+  .p-total{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--line2)}
+  .p-total span{color:var(--ink2);font-weight:700} .p-total b{font-size:22px;font-weight:800;color:var(--green)}
+
+  /* ===== modal ===== */
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:18px;width:100%;max-width:520px;box-shadow:var(--sh-lg);max-height:92vh;overflow:auto}
+  .modal .mhead{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .modal .mhead h3{font-size:17px;font-weight:800} .modal .mhead small{color:var(--muted);font-size:12.5px}
+  .modal .mbody{padding:22px}
+  .close{background:var(--line2);border:none;width:34px;height:34px;border-radius:10px;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+  .close:hover{background:var(--line)}
+  .alert{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;display:none;line-height:1.7}
+  .alert.show{display:block}
+  .alert.err{background:var(--redbg);border:1px solid #f6c9d3;color:#9f1239}
+  .alert b{color:#881337}
+  .booked{margin-top:18px}
+  .booked h4{font-size:12px;color:var(--muted);font-weight:700;margin:0 0 8px;letter-spacing:.3px}
+  .booked .b{display:flex;justify-content:space-between;padding:10px 12px;background:var(--line2);border-radius:10px;margin-bottom:6px;font-size:13px}
+  .booked .b b{font-weight:700}
+
+  /* ===== sales admin + public storefront ===== */
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  textarea{width:100%;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);
+    color:var(--ink);font-size:15px;font-family:inherit;min-height:92px;resize:vertical;line-height:1.6}
+  textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+  .thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .thumbs .t{position:relative;width:88px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+  .thumbs .t img{width:100%;height:100%;object-fit:cover}
+  .thumbs .t button{position:absolute;top:3px;inset-inline-end:3px;width:20px;height:20px;border:none;border-radius:6px;
+    background:rgba(15,23,42,.78);color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;display:grid;place-items:center}
+  .sale-thumb{width:64px;height:46px;border-radius:8px;object-fit:cover;border:1px solid var(--line);display:block}
+  .noimg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;background:var(--line2)}
+
+  #publicApp{display:none;position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto}
+  .pub-header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 24px}
+  .pub-header .pb{display:flex;align-items:center;gap:12px}
+  .pub-header h1{font-size:17px;font-weight:800}
+  .pub-header small{color:var(--muted);font-size:11.5px;display:block}
+  .pub-wrap{max-width:1200px;margin:0 auto;padding:26px 24px 60px}
+  .pub-hero{margin-bottom:24px;background:var(--nav);border-radius:22px;padding:36px 32px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--sh-lg)}
+  .pub-hero::after{content:"";position:absolute;inset-inline-end:-70px;top:-70px;width:260px;height:260px;background:radial-gradient(circle,rgba(59,123,255,.55),transparent 68%)}
+  .pub-hero h2{font-size:29px;font-weight:800;color:#fff;position:relative}
+  .pub-hero p{color:rgba(255,255,255,.72);margin-top:6px;position:relative}
+  .pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+  .listing{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;
+    box-shadow:var(--sh);transition:.16s;display:flex;flex-direction:column}
+  .listing:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+  .listing .lt{position:relative;aspect-ratio:16/11;background:var(--line2)}
+  .listing .lt img{width:100%;height:100%;object-fit:cover}
+  .listing.sold .lt img{filter:grayscale(.65) brightness(.85)}
+  .ribbon{position:absolute;top:14px;inset-inline-start:0;background:var(--red);color:#fff;font-weight:800;font-size:12px;
+    padding:6px 15px;border-radius:0 8px 8px 0;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+  .lb{padding:14px 16px;display:flex;flex-direction:column;gap:7px;flex:1}
+  .lb .lprice{font-size:20px;font-weight:800;color:var(--blue)}
+  .lb h3{font-size:15.5px;font-weight:700}
+  .lmeta{display:flex;flex-wrap:wrap;gap:6px}
+  .lmeta span{background:var(--line2);color:var(--ink2);font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px}
+  .lloc{color:var(--muted);font-size:12.5px;margin-top:auto;padding-top:4px}
+  .pub-back{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-weight:700;font-size:14px;
+    background:none;border:none;cursor:pointer;font-family:inherit;padding:0;margin-bottom:16px}
+  .pub-back:hover{color:var(--ink)}
+  .detail-grid{display:grid;grid-template-columns:1.5fr .95fr;gap:24px;align-items:start}
+  .gallery{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+  .gmain{position:relative;aspect-ratio:16/10;background:var(--line2)}
+  .gmain img{width:100%;height:100%;object-fit:cover}
+  .sold-banner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.4)}
+  .sold-banner span{background:var(--red);color:#fff;font-weight:800;font-size:22px;padding:12px 34px;border-radius:12px;transform:rotate(-8deg);box-shadow:var(--sh-lg)}
+  .gthumbs{display:flex;gap:8px;padding:10px;overflow-x:auto}
+  .gthumbs img{width:88px;height:62px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex:none}
+  .gthumbs img.active{border-color:var(--blue)}
+  .d-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px 22px;margin-top:20px}
+  .d-block h3{font-size:16px;font-weight:800;margin-bottom:14px}
+  .d-block p{color:var(--ink2);line-height:1.9;white-space:pre-wrap;margin:0}
+  .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .spec-grid .s{background:var(--surface);padding:13px 16px;display:flex;justify-content:space-between;gap:10px;font-size:14px}
+  .spec-grid .s span{color:var(--muted)} .spec-grid .s b{font-weight:700}
+  .side{position:sticky;top:86px;display:flex;flex-direction:column;gap:16px}
+  .price-card,.contact-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:22px}
+  .price-card .t{font-size:17px;font-weight:800;margin-bottom:6px}
+  .price-card .p{font-size:29px;font-weight:800;color:var(--blue)}
+  .price-card .st{margin-top:12px}
+  .contact-card h4{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:12px}
+  .seller{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .seller b{font-size:15px}.seller small{color:var(--muted);font-size:12.5px;display:block}
+  .btn.wa{background:#25d366;border-color:#25d366;color:#fff}.btn.wa:hover{background:#20bd5a}
+  .btn.call{background:var(--blue);border-color:var(--blue);color:#fff}.btn.call:hover{filter:brightness(1.06)}
+  @media (max-width:900px){.detail-grid{grid-template-columns:1fr}.side{position:static}}
+  @media (max-width:640px){.row3{grid-template-columns:1fr}.spec-grid{grid-template-columns:1fr}.pub-wrap{padding:20px 15px 50px}.pub-header{padding:11px 15px}}
+
+  #contractPrint{position:fixed;left:-99999px;top:0}
+  @media print{body *{visibility:hidden}#contractPrint,#contractPrint *{visibility:visible}#contractPrint{position:absolute;left:0;top:0;width:100%}}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--brand);color:#fff;
+    padding:13px 24px;border-radius:12px;box-shadow:var(--sh-lg);transition:.28s;z-index:99;font-weight:700;font-size:14px}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:1080px){.contract-grid,.agents-grid{grid-template-columns:1fr}.preview{position:static}}
+  @media (max-width:900px){
+    .sidebar{transform:translateX(100%)} .sidebar.open{transform:translateX(0);box-shadow:-8px 0 34px rgba(0,0,0,.16)}
+    main{margin-inline-start:0;padding:18px 15px 50px} .topbar{display:flex}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:520px){.row2{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}.search input{width:100%}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-brand">
+    <div class="s-logo">MC</div>
+    <div><h1>Master Cars</h1><small>لوحة التحكم</small></div>
+  </div>
+  <div class="s-label">القائمة</div>
+  <nav class="s-nav" id="nav">
+    <button data-tab="fleet" class="active">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11m-14 0h14m-14 0v5m14-5v5M7.5 16h.01M16.5 16h.01M5 16h14v2H5z"/></svg>
+      الأسطول
+    </button>
+    <button data-tab="bookings">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+      الحجوزات
+    </button>
+    <button data-tab="contracts">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+      العقود
+    </button>
+    <button data-tab="agents">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0M16.5 5.2a3 3 0 0 1 0 5.6M17 20h4.2a5.2 5.2 0 0 0-4-4.9"/></svg>
+      الموظفون
+    </button>
+  </nav>
+  <div class="s-label">المتجر</div>
+  <nav class="s-nav">
+    <button data-tab="sales">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1.6-5h14.8L21 9M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9zM4 9a2.4 2.4 0 0 0 4 0 2.4 2.4 0 0 0 4 0 2.4 2.4 0 0 0 4 0 2.4 2.4 0 0 0 4 0"/></svg>
+      سيارات للبيع
+    </button>
+    <button onclick="location.hash='#/showroom'">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h6v6M21 3l-9 9M10 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+      المعرض العام
+    </button>
+  </nav>
+  <div class="s-foot">
+    <b>ماستر كارز</b>
+    الجزائر <span class="dot">•</span> 05 00 00 00 00<br>السجل التجاري: —
+  </div>
+</aside>
+<div class="backdrop" id="backdrop" onclick="toggleDrawer(false)"></div>
+
+<div class="topbar">
+  <button class="burger" onclick="toggleDrawer(true)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <b>Master Cars</b>
+</div>
+
+<main>
+  <!-- ===== FLEET ===== -->
+  <section id="fleet">
+    <div class="head-row">
+      <div><h2>الأسطول</h2><p>إدارة السيارات والحجوزات — النظام يمنع تعارض التواريخ تلقائياً.</p></div>
+      <div class="tools">
+        <div class="search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input id="searchInput" placeholder="ابحث عن سيارة…" oninput="renderFleet()">
+        </div>
+        <div class="segment" id="filterSeg">
+          <button data-f="all" class="active" onclick="setFilter('all')">الكل</button>
+          <button data-f="free" onclick="setFilter('free')">متاحة</button>
+          <button data-f="busy" onclick="setFilter('busy')">مؤجرة</button>
+        </div>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid" id="fleetList"></div>
+  </section>
+
+  <!-- ===== BOOKINGS ===== -->
+  <section id="bookings" style="display:none">
+    <div class="head-row"><div><h2>الحجوزات</h2><p>جميع الحجوزات الحالية والقادمة والمنتهية.</p></div></div>
+    <div class="kpis" id="bkpis"></div>
+    <div class="panel">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>السيارة</th><th>العميل</th><th>من</th><th>إلى</th><th>الأيام</th><th>الإجمالي</th><th>الحالة</th><th></th></tr></thead>
+          <tbody id="bookingRows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="bookingEmpty" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+        <div>لا توجد حجوزات بعد. ابدأ من صفحة الأسطول.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTRACTS ===== -->
+  <section id="contracts" style="display:none">
+    <div class="head-row"><div><h2>إنشاء عقد إيجار</h2><p>عبّئ البيانات وستُبنى المعاينة تلقائياً — ثم اطبع أو احفظ PDF.</p></div></div>
+    <div class="contract-grid">
+      <div class="form-card">
+        <div class="card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>بيانات العقد</div>
+        <div class="field"><label>الحجز المرتبط (اختياري)</label><select id="cLink"><option value="">— بدون ربط، عقد يدوي —</option></select></div>
+        <div class="row2">
+          <div class="field"><label>الاسم الكامل للمستأجر</label><input id="cName" placeholder="محمد بن أحمد" oninput="updatePreview()"></div>
+          <div class="field"><label>رقم بطاقة التعريف</label><input id="cIdNum" placeholder="XXXXXXXXX" oninput="updatePreview()"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>رقم الهاتف</label><input id="cPhone" placeholder="05XXXXXXXX" oninput="updatePreview()"></div>
+          <div class="field"><label>السيارة</label><input id="cCar" placeholder="Volkswagen Tiguan" oninput="updatePreview()"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>من تاريخ</label><input type="date" id="cStart" oninput="updatePreview()"></div>
+          <div class="field"><label>إلى تاريخ</label><input type="date" id="cEnd" oninput="updatePreview()"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>السعر اليومي (دج)</label><input type="number" id="cPrice" placeholder="11000" oninput="updatePreview()"></div>
+          <div class="field"><label>مبلغ الضمان (دج)</label><input type="number" id="cDeposit" placeholder="50000" oninput="updatePreview()"></div>
+        </div>
+        <div class="field" style="margin-bottom:0"><label>صورة بطاقة التعريف / رخصة السياقة</label>
+          <input type="file" id="cIdFile" accept="image/*">
+          <img id="cIdPreview" style="display:none;margin-top:12px;max-width:220px;border-radius:11px;border:1px solid var(--line)"></div>
+      </div>
+
+      <aside class="preview">
+        <div class="p-doc">
+          <div class="p-head"><div class="p-logo">MC</div><div><b>عقد إيجار سيارة</b><br><small>Master Cars — الجزائر</small></div></div>
+          <div class="p-body">
+            <div class="p-row"><span>المستأجر</span><b id="pvName">—</b></div>
+            <div class="p-row"><span>السيارة</span><b id="pvCar">—</b></div>
+            <div class="p-row"><span>الفترة</span><b id="pvPeriod">—</b></div>
+            <div class="p-row"><span>عدد الأيام</span><b id="pvDays">—</b></div>
+            <div class="p-row"><span>السعر اليومي</span><b id="pvPrice">—</b></div>
+            <div class="p-row" style="border:none"><span>الضمان</span><b id="pvDeposit">—</b></div>
+          </div>
+          <div class="p-total"><span>إجمالي الإيجار</span><b id="pvTotal">0 دج</b></div>
+        </div>
+        <button class="btn primary block" onclick="generateContract()">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+          توليد وطباعة العقد
+        </button>
+        <button class="btn block" onclick="resetContractForm()">تفريغ الحقول</button>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== AGENTS ===== -->
+  <section id="agents" style="display:none">
+    <div class="head-row"><div><h2>الموظفون</h2><p>أنشئ حسابات دخول للموظفين — البريد الإلكتروني وكلمة المرور.</p></div></div>
+    <div class="agents-grid">
+      <div class="form-card">
+        <div class="card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M19 8v6M22 11h-6"/></svg>إضافة موظف</div>
+        <div class="field"><label>الاسم الكامل</label><input id="aName" placeholder="اسم الموظف"></div>
+        <div class="field"><label>البريد الإلكتروني</label><input id="aEmail" type="email" placeholder="agent@mastercars.dz"></div>
+        <div class="field"><label>كلمة المرور</label><input id="aPass" type="password" placeholder="6 أحرف على الأقل"></div>
+        <div class="alert err" id="aAlert"></div>
+        <button class="btn primary block" style="margin-top:10px" onclick="addAgent()">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>إضافة الموظف
+        </button>
+      </div>
+      <div class="panel">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>الاسم</th><th>البريد الإلكتروني</th><th>كلمة المرور</th><th>أُضيف</th><th></th></tr></thead>
+            <tbody id="agentRows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="agentEmpty" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M19 8v6M22 11h-6"/></svg>
+          <div>لا يوجد موظفون بعد. أضف أول موظف من النموذج.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SALES (admin) ===== -->
+  <section id="sales" style="display:none">
+    <div class="head-row">
+      <div><h2>سيارات للبيع</h2><p>أضف وعدّل السيارات المعروضة للبيع في المعرض العام — وحدّد المباعة منها.</p></div>
+      <button class="btn primary" onclick="location.hash='#/showroom'">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M15 3h6v6M21 3l-9 9M10 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+        فتح المعرض العام
+      </button>
+    </div>
+    <div class="kpis" id="skpis"></div>
+    <div class="form-card" style="margin-bottom:22px">
+      <div class="card-title"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13l2-5h14l2 5M5 13h14v5H5z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></svg><span id="saleFormTitle">إضافة سيارة للبيع</span></div>
+      <div class="field"><label>عنوان الإعلان</label><input id="slTitle" placeholder="مثال: Volkswagen Tiguan 2020 بحالة ممتازة"></div>
+      <div class="row3">
+        <div class="field"><label>الماركة</label><input id="slBrand" placeholder="Volkswagen"></div>
+        <div class="field"><label>الموديل</label><input id="slModel" placeholder="Tiguan"></div>
+        <div class="field"><label>السنة</label><input id="slYear" type="number" placeholder="2020"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label>السعر (دج)</label><input id="slPrice" type="number" placeholder="4800000"></div>
+        <div class="field"><label>الكيلومتراج</label><input id="slKm" type="number" placeholder="52000"></div>
+        <div class="field"><label>اللون</label><input id="slColor" placeholder="أبيض"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label>الطاقة</label><select id="slFuel"><option>بنزين</option><option>ديزل</option><option>كهرباء</option><option>هجين</option></select></div>
+        <div class="field"><label>ناقل الحركة</label><select id="slGear"><option>أوتوماتيك</option><option>يدوي</option></select></div>
+        <div class="field"><label>الولاية</label><input id="slWilaya" placeholder="الجزائر العاصمة"></div>
+      </div>
+      <div class="field"><label>رقم الهاتف للتواصل</label><input id="slPhone" placeholder="05XX XX XX XX"></div>
+      <div class="field"><label>الوصف</label><textarea id="slDesc" placeholder="حالة السيارة، التجهيزات، الصيانة…"></textarea></div>
+      <div class="field"><label>صور السيارة (يمكن اختيار عدة صور)</label>
+        <input type="file" id="slImages" accept="image/*" multiple>
+        <div class="thumbs" id="slThumbs"></div>
+      </div>
+      <div class="alert err" id="slAlert"></div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn primary" onclick="saveSale()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span id="saleSaveLabel">إضافة السيارة</span></button>
+        <button class="btn" id="saleCancelBtn" style="display:none" onclick="resetSaleForm()">إلغاء التعديل</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>الصورة</th><th>العنوان</th><th>السعر</th><th>السنة</th><th>الحالة</th><th></th></tr></thead>
+          <tbody id="saleRows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="saleEmpty" style="display:none">لا توجد سيارات معروضة للبيع بعد. أضف أول سيارة من النموذج.</div>
+    </div>
+  </section>
+</main>
+
+<!-- BOOKING MODAL -->
+<div class="overlay" id="bookModal">
+  <div class="modal">
+    <div class="mhead"><div><h3 id="bmTitle">حجز سيارة</h3><small id="bmSub"></small></div><button class="close" onclick="closeBook()">&times;</button></div>
+    <div class="mbody">
+      <div class="field"><label>اسم العميل</label><input id="bCustomer" placeholder="اسم المستأجر"></div>
+      <datalist id="agentNames"></datalist>
+      <div class="row2">
+        <div class="field"><label>من تاريخ</label><input type="date" id="bStart"></div>
+        <div class="field"><label>إلى تاريخ</label><input type="date" id="bEnd"></div>
+      </div>
+      <div class="alert err" id="bAlert"></div>
+      <div class="booked" id="bBookedWrap" style="display:none">
+        <h4>الفترات المحجوزة لهذه السيارة</h4>
+        <div id="bBookedList"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:22px">
+        <button class="btn primary" style="flex:1" onclick="confirmBooking()">تأكيد الحجز</button>
+        <button class="btn" onclick="closeBook()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="contractPrint"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ===== PUBLIC STOREFRONT ===== -->
+<div id="publicApp">
+  <div class="pub-header">
+    <div class="pb"><div class="s-logo">MC</div><div><h1>Master Cars</h1><small>معرض السيارات — الجزائر</small></div></div>
+    <button class="btn sm" onclick="location.hash=''">لوحة التحكم →</button>
+  </div>
+  <div class="pub-wrap" id="pubBody"></div>
+</div>
+
+<script>
+/* ---------- storage ---------- */
+const LS={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+const AGENCY={name:"شركة ماستر كارز لتأجير السيارات",cr:"—",phone:"05 00 00 00 00",city:"الجزائر"};
+
+const SEED_CARS=[
+  {id:'evoque',name:'Range Rover Evoque',cat:'SUV فاخر · 2022',price:18000,img:'images/evoque.jpg',specs:['5 مقاعد','دفع رباعي','بنزين']},
+  {id:'x3',name:'BMW X3',cat:'SUV فاخر · 2023',price:16000,img:'images/x3.jpg',specs:['5 مقاعد','xDrive','بنزين']},
+  {id:'q5',name:'Audi Q5',cat:'SUV فاخر · 2022',price:15000,img:'images/q5.jpg',specs:['5 مقاعد','كواترو','بنزين']},
+  {id:'tiguan',name:'Volkswagen Tiguan',cat:'SUV عائلي · 2023',price:11000,img:'images/tiguan.jpg',specs:['5 مقاعد','أوتوماتيك','بنزين']},
+  {id:'tucson',name:'Hyundai Tucson',cat:'SUV عائلي · 2022',price:10000,img:'images/tucson.jpg',specs:['5 مقاعد','أوتوماتيك','بنزين']},
+  {id:'troc',name:'Volkswagen T-Roc',cat:'SUV مدمج · 2023',price:9000,img:'images/troc.jpg',specs:['5 مقاعد','أوتوماتيك','بنزين']},
+  {id:'golf',name:'Volkswagen Golf 8',cat:'سيارة عائلية · 2022',price:7500,img:'images/golf.jpg',specs:['5 مقاعد','أوتوماتيك','بنزين']},
+  {id:'duster',name:'Dacia Duster',cat:'SUV اقتصادي · 2022',price:6500,img:'images/duster.jpg',specs:['5 مقاعد','يدوي','ديزل']},
+];
+let cars=LS.get('cars',null); if(!cars||LS.get('carsVer')!=='dz3'){cars=SEED_CARS;LS.set('cars',cars);LS.set('carsVer','dz3');}
+let bookings=LS.get('bookings',[]);
+const save=()=>LS.set('bookings',bookings);
+let agents=LS.get('agents',[]);
+const saveAgents=()=>LS.set('agents',agents);
+const esc=s=>(''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- helpers ---------- */
+const today=()=>new Date().toISOString().slice(0,10);
+const days=(a,b)=>Math.round((new Date(b)-new Date(a))/86400000)+1;
+const AR_MONTHS=['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const fmt=d=>{const x=new Date(d);return `${x.getDate()} ${AR_MONTHS[x.getMonth()]} ${x.getFullYear()}`;};
+const nf=n=>(''+Math.round(n||0)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+const money=n=>nf(n)+' دج';
+// core rule: two closed ranges overlap iff aStart<=bEnd && bStart<=aEnd
+const overlaps=(aS,aE,bS,bE)=>aS<=bE&&bS<=aE;
+function conflictFor(carId,s,e,ig){return bookings.find(b=>b.carId===carId&&b.id!==ig&&overlaps(s,e,b.start,b.end));}
+function currentBooking(carId){const t=today();return bookings.find(b=>b.carId===carId&&overlaps(t,t,b.start,b.end));}
+
+/* ---------- KPIs ---------- */
+function renderKpis(){
+  const rented=cars.filter(c=>currentBooking(c.id)).length;
+  const upcoming=bookings.filter(b=>b.start>today()).length;
+  const k=[
+    {n:cars.length,l:'إجمالي السيارات',c:'blue',ic:'<path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11m-14 0h14m-14 0v5m14-5v5M7.5 16h.01M16.5 16h.01M5 16h14v2H5z"/>'},
+    {n:cars.length-rented,l:'متاحة الآن',c:'green',ic:'<path d="M20 6L9 17l-5-5"/>'},
+    {n:rented,l:'مؤجرة حالياً',c:'red',ic:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3m-3 0h3v3"/>'},
+    {n:upcoming,l:'حجوزات قادمة',c:'indigo',ic:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>'},
+  ];
+  document.getElementById('kpis').innerHTML=k.map(x=>`<div class="kpi"><div class="ic ${x.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">${x.ic}</svg></div><div><div class="n">${x.n}</div><div class="l">${x.l}</div></div></div>`).join('');
+  // bookings page mini kpis
+  const active=bookings.filter(b=>{const t=today();return overlaps(t,t,b.start,b.end);}).length;
+  const revenue=bookings.reduce((s,b)=>s+days(b.start,b.end)*b.price,0);
+  const bk=[
+    {n:bookings.length,l:'إجمالي الحجوزات',c:'blue',ic:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>'},
+    {n:active,l:'نشطة الآن',c:'green',ic:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'},
+    {n:upcoming,l:'قادمة',c:'indigo',ic:'<path d="M12 5v14M5 12h14"/>'},
+    {n:nf(revenue)+' دج',l:'إجمالي الإيرادات',c:'red',ic:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'},
+  ];
+  document.getElementById('bkpis').innerHTML=bk.map(x=>`<div class="kpi"><div class="ic ${x.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">${x.ic}</svg></div><div><div class="n">${x.n}</div><div class="l">${x.l}</div></div></div>`).join('');
+}
+
+/* ---------- fleet ---------- */
+let filter='all';
+function setFilter(f){filter=f;document.querySelectorAll('#filterSeg button').forEach(b=>b.classList.toggle('active',b.dataset.f===f));renderFleet();}
+function renderFleet(){
+  renderKpis();
+  const q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  const list=cars.filter(c=>{
+    const busy=!!currentBooking(c.id);
+    if(filter==='free'&&busy)return false;
+    if(filter==='busy'&&!busy)return false;
+    if(q&&!(c.name.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q)))return false;
+    return true;
+  });
+  const el=document.getElementById('fleetList');
+  if(!list.length){el.innerHTML=`<div class="panel empty" style="grid-column:1/-1">لا توجد سيارات مطابقة.</div>`;return;}
+  el.innerHTML=list.map(c=>{
+    const cur=currentBooking(c.id);
+    const tag=cur?`<span class="tag busy">مؤجرة حتى ${fmt(cur.end)}</span>`:`<span class="tag free">متاحة</span>`;
+    return `<article class="car">
+      <div class="thumb">${tag}<img src="${c.img}" alt="${c.name}" loading="lazy"></div>
+      <div class="c-body">
+        <span class="eyebrow">${c.cat}</span>
+        <h3>${c.name}</h3>
+        <div class="feat">${c.specs.map(s=>`<span>${s}</span>`).join('')}</div>
+        <div class="c-foot"><div class="price"><b>${nf(c.price)}</b><span>دج / يوم</span></div></div>
+        <div class="c-actions">
+          <button class="btn primary" onclick="openBook('${c.id}')">حجز الآن</button>
+          <button class="btn" onclick="goContract('${c.id}')">عقد</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* ---------- booking modal ---------- */
+let currentCar=null;
+function openBook(id){
+  currentCar=cars.find(c=>c.id===id);
+  document.getElementById('bmTitle').textContent='حجز سيارة';
+  document.getElementById('bmSub').textContent=currentCar.name+' · '+money(currentCar.price)+' / يوم';
+  ['bCustomer','bStart','bEnd'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('bStart').value=today();
+  hideAlert();
+  const mine=bookings.filter(b=>b.carId===id).sort((a,b)=>a.start.localeCompare(b.start));
+  const wrap=document.getElementById('bBookedWrap');
+  if(mine.length){wrap.style.display='block';
+    document.getElementById('bBookedList').innerHTML=mine.map(b=>`<div class="b"><span>${b.customer||'عميل'}</span><b>${fmt(b.start)} ← ${fmt(b.end)}</b></div>`).join('');
+  }else wrap.style.display='none';
+  document.getElementById('bookModal').classList.add('show');
+}
+function closeBook(){document.getElementById('bookModal').classList.remove('show');}
+function hideAlert(){document.getElementById('bAlert').classList.remove('show');}
+function showAlert(h){const a=document.getElementById('bAlert');a.innerHTML=h;a.classList.add('show');}
+function confirmBooking(){
+  const customer=val('bCustomer'),start=val('bStart'),end=val('bEnd');
+  if(!customer||!start||!end){showAlert('⚠️ الرجاء تعبئة جميع الحقول.');return;}
+  if(end<start){showAlert('⚠️ تاريخ النهاية قبل تاريخ البداية.');return;}
+  const c=conflictFor(currentCar.id,start,end);
+  if(c){showAlert(`🚫 <b>هذه السيارة محجوزة بالفعل</b><br>خلال الفترة من <b>${fmt(c.start)}</b> إلى <b>${fmt(c.end)}</b> باسم ${c.customer}.<br>الرجاء اختيار فترة أخرى.`);return;}
+  bookings.push({id:'b'+Date.now(),carId:currentCar.id,carName:currentCar.name,price:currentCar.price,customer,start,end,createdAt:today()});
+  save();closeBook();renderFleet();renderBookings();toast('✅ تم تأكيد الحجز بنجاح');
+}
+
+/* ---------- bookings table ---------- */
+function statusOf(b){const t=today();
+  if(t<b.start)return{t:'قادم',bg:'var(--indigobg)',c:'var(--indigo)'};
+  if(t>b.end)return{t:'منتهٍ',bg:'var(--line2)',c:'var(--muted)'};
+  return{t:'جارٍ الآن',bg:'var(--greenbg)',c:'var(--green)'};
+}
+function renderBookings(){
+  renderKpis();
+  const rows=document.getElementById('bookingRows');
+  const sorted=[...bookings].sort((a,b)=>b.start.localeCompare(a.start));
+  document.getElementById('bookingEmpty').style.display=sorted.length?'none':'block';
+  rows.innerHTML=sorted.map(b=>{const s=statusOf(b);
+    return `<tr><td><b>${b.carName}</b></td><td>${b.customer}</td><td>${fmt(b.start)}</td><td>${fmt(b.end)}</td><td>${days(b.start,b.end)}</td><td><b>${money(days(b.start,b.end)*b.price)}</b></td>
+      <td><span class="pill" style="background:${s.bg};color:${s.c}">${s.t}</span></td>
+      <td><button class="btn danger sm" onclick="delBooking('${b.id}')">حذف</button></td></tr>`;
+  }).join('');
+}
+function delBooking(id){if(!confirm('حذف هذا الحجز؟'))return;bookings=bookings.filter(b=>b.id!==id);save();renderFleet();renderBookings();toast('تم حذف الحجز');}
+
+/* ---------- contracts ---------- */
+let idImageData='';
+document.getElementById('cIdFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>downscale(r.result,900,d=>{idImageData=d;const img=document.getElementById('cIdPreview');img.src=d;img.style.display='block';});r.readAsDataURL(f);});
+// ponytail: downscale before storing so localStorage 5MB quota isn't blown by full-res photos
+function downscale(dataUrl,maxW,cb){const img=new Image();
+  img.onload=()=>{const s=Math.min(1,maxW/img.width);const cv=document.createElement('canvas');cv.width=img.width*s;cv.height=img.height*s;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);cb(cv.toDataURL('image/jpeg',0.8));};img.src=dataUrl;}
+function fillContractFromBooking(id){const b=bookings.find(x=>x.id===id);if(!b)return;set('cName',b.customer);set('cCar',b.carName);set('cStart',b.start);set('cEnd',b.end);set('cPrice',b.price);updatePreview();}
+function goContract(carId){switchTab('contracts');const c=cars.find(x=>x.id===carId);set('cCar',c.name);set('cPrice',c.price);updatePreview();}
+function updatePreview(){
+  const name=val('cName'),car=val('cCar'),start=val('cStart'),end=val('cEnd'),price=+val('cPrice')||0,dep=+val('cDeposit')||0;
+  const nDays=(start&&end&&end>=start)?days(start,end):0;
+  set2('pvName',name||'—');set2('pvCar',car||'—');
+  set2('pvPeriod',(start&&end)?`${fmt(start)} ← ${fmt(end)}`:'—');
+  set2('pvDays',nDays?nDays+' يوم':'—');set2('pvPrice',price?money(price):'—');set2('pvDeposit',dep?money(dep):'—');
+  set2('pvTotal',money(nDays*price));
+}
+function generateContract(){
+  const name=val('cName'),idnum=val('cIdNum'),phone=val('cPhone'),car=val('cCar'),start=val('cStart'),end=val('cEnd'),price=+val('cPrice')||0,dep=+val('cDeposit')||0;
+  if(!name||!car||!start||!end){toast('⚠️ الاسم، السيارة، والتواريخ مطلوبة');return;}
+  if(end<start){toast('⚠️ تاريخ النهاية قبل البداية');return;}
+  const nDays=days(start,end),total=nDays*price,no='MC-'+new Date().getFullYear()+'-'+Math.floor(1000+Math.random()*9000);
+  document.getElementById('contractPrint').innerHTML=contractHTML({no,name,idnum,phone,car,start,end,nDays,price,total,dep});
+  window.print();
+}
+function resetContractForm(){['cName','cIdNum','cPhone','cCar','cStart','cEnd','cPrice','cDeposit','cLink'].forEach(x=>set(x,''));idImageData='';document.getElementById('cIdPreview').style.display='none';updatePreview();}
+function contractHTML(d){
+  return `<div style="direction:rtl;font-family:'Traditional Arabic',Tahoma,serif;color:#111;padding:40px 46px;max-width:800px;margin:auto;line-height:1.9">
+    <div style="text-align:center;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:22px">
+      <div style="font-size:26px;font-weight:800;letter-spacing:1px">${AGENCY.name}</div>
+      <div style="color:#555;font-size:13px">السجل التجاري: ${AGENCY.cr} — هاتف: ${AGENCY.phone} — ${AGENCY.city}</div>
+      <h2 style="margin:14px 0 0">عقد إيجار سيارة</h2>
+      <div style="color:#555">رقم العقد: ${d.no} — بتاريخ: ${fmt(today())}</div>
+    </div>
+    <p>إنه في يوم ${fmt(today())} تم الاتفاق بين كل من:</p>
+    <p><b>الطرف الأول (المؤجر):</b> ${AGENCY.name}، ويمثلها موظف الوكالة المختص.</p>
+    <p><b>الطرف الثاني (المستأجر):</b> السيد/ ${d.name} — رقم بطاقة التعريف: ${d.idnum||'—'} — الهاتف: ${d.phone||'—'}.</p>
+    <p style="font-weight:700;margin-top:18px">وقد اتفق الطرفان على البنود التالية:</p>
+    <table style="width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:15px">
+      <tr><td style="border:1px solid #ccc;padding:8px;background:#f4f4f4;width:38%">السيارة المؤجرة</td><td style="border:1px solid #ccc;padding:8px">${d.car}</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:8px;background:#f4f4f4">مدة الإيجار</td><td style="border:1px solid #ccc;padding:8px">من ${fmt(d.start)} إلى ${fmt(d.end)} (${d.nDays} يوم)</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:8px;background:#f4f4f4">القيمة اليومية</td><td style="border:1px solid #ccc;padding:8px">${money(d.price)}</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:8px;background:#f4f4f4">إجمالي مبلغ الإيجار</td><td style="border:1px solid #ccc;padding:8px;font-weight:700">${money(d.total)}</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:8px;background:#f4f4f4">مبلغ الضمان (يُسترد)</td><td style="border:1px solid #ccc;padding:8px">${money(d.dep)}</td></tr>
+    </table>
+    <ol style="font-size:14px;padding-right:18px">
+      <li>يقر المستأجر باستلام السيارة بحالة جيدة وسليمة من جميع النواحي الفنية والشكلية.</li>
+      <li>يلتزم المستأجر بإعادة السيارة في التاريخ المحدد أعلاه، ويُحتسب يوم تأخير إضافي بقيمة الإيجار اليومي عن كل يوم تأخير.</li>
+      <li>يتحمل المستأجر كامل المسؤولية عن أي مخالفات مرورية أو أضرار تقع خلال فترة الإيجار.</li>
+      <li>لا يجوز للمستأجر تأجير السيارة من الباطن أو التنازل عنها للغير.</li>
+      <li>يُستخدم مبلغ الضمان لتغطية أي أضرار أو مخالفات، ويُعاد المتبقي للمستأجر عند تسليم السيارة سليمة.</li>
+      <li>يخضع هذا العقد لأحكام القانون الجزائري، وأي نزاع يُحال إلى الجهات القضائية المختصة.</li>
+    </ol>
+    ${idImageData?`<div style="margin-top:14px"><b>صورة بطاقة تعريف المستأجر:</b><br><img src="${idImageData}" style="max-width:260px;border:1px solid #ccc;margin-top:6px"></div>`:''}
+    <div style="display:flex;justify-content:space-between;margin-top:46px;font-size:15px">
+      <div style="text-align:center">الطرف الأول (المؤجر)<br><br>__________________<br>التوقيع والختم</div>
+      <div style="text-align:center">الطرف الثاني (المستأجر)<br><br>__________________<br>${d.name}</div>
+    </div></div>`;
+}
+
+/* ---------- agents ---------- */
+function addAgent(){
+  const name=val('aName'),email=val('aEmail'),pass=document.getElementById('aPass').value;
+  const al=document.getElementById('aAlert');al.classList.remove('show');
+  const err=m=>{al.textContent=m;al.classList.add('show');};
+  if(!name||!email||!pass)return err('⚠️ الرجاء تعبئة جميع الحقول.');
+  if(!/^\S+@\S+\.\S+$/.test(email))return err('⚠️ البريد الإلكتروني غير صحيح.');
+  if(pass.length<6)return err('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل.');
+  if(agents.some(a=>a.email.toLowerCase()===email.toLowerCase()))return err('⚠️ هذا البريد مُسجّل مسبقاً.');
+  // ponytail: plaintext password in localStorage — fine for a local demo; hash server-side for production
+  agents.push({id:'a'+Date.now(),name,email,pass,createdAt:today()});
+  saveAgents();set('aName','');set('aEmail','');document.getElementById('aPass').value='';
+  renderAgents();populateAgentList();toast('✅ تم إضافة الموظف');
+}
+function delAgent(id){if(!confirm('حذف هذا الموظف؟'))return;agents=agents.filter(a=>a.id!==id);saveAgents();renderAgents();populateAgentList();toast('تم حذف الموظف');}
+function renderAgents(){
+  const rows=document.getElementById('agentRows');
+  document.getElementById('agentEmpty').style.display=agents.length?'none':'block';
+  rows.innerHTML=agents.map(a=>`<tr><td><b>${esc(a.name)}</b></td><td>${esc(a.email)}</td>
+    <td><span class="pw" data-p="${esc(a.pass)}">••••••</span> <button class="btn sm" style="padding:5px 10px;margin-inline-start:6px" onclick="revealPw(this)">إظهار</button></td>
+    <td>${fmt(a.createdAt)}</td>
+    <td><button class="btn danger sm" onclick="delAgent('${a.id}')">حذف</button></td></tr>`).join('');
+}
+function revealPw(btn){const s=btn.parentElement.querySelector('.pw');
+  if(s.textContent==='••••••'){s.textContent=s.dataset.p;btn.textContent='إخفاء';}else{s.textContent='••••••';btn.textContent='إظهار';}}
+function populateAgentList(){document.getElementById('agentNames').innerHTML=agents.map(a=>`<option value="${esc(a.name)}">`).join('');}
+
+/* ---------- nav / utils ---------- */
+function switchTab(name){
+  document.querySelectorAll('.s-nav button[data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  ['fleet','bookings','contracts','agents','sales'].forEach(s=>document.getElementById(s).style.display=s===name?'block':'none');
+  if(name==='contracts'){refreshContractLink();updatePreview();}
+  if(name==='bookings')renderBookings();
+  if(name==='agents')renderAgents();
+  if(name==='sales')renderSales();
+  toggleDrawer(false);window.scrollTo(0,0);
+}
+document.querySelectorAll('.s-nav button[data-tab]').forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
+function toggleDrawer(open){document.getElementById('sidebar').classList.toggle('open',open);document.getElementById('backdrop').classList.toggle('show',open);}
+document.getElementById('bookModal').addEventListener('click',e=>{if(e.target.id==='bookModal')closeBook();});
+document.getElementById('cLink').addEventListener('change',e=>{if(e.target.value)fillContractFromBooking(e.target.value);});
+function refreshContractLink(){const sel=document.getElementById('cLink');const cur=sel.value;
+  sel.innerHTML='<option value="">— بدون ربط، عقد يدوي —</option>'+bookings.map(b=>`<option value="${b.id}">${b.customer} · ${b.carName} · ${fmt(b.start)}</option>`).join('');sel.value=cur;}
+const val=id=>document.getElementById(id).value.trim();
+const set=(id,v)=>document.getElementById(id).value=v;
+const set2=(id,v)=>document.getElementById(id).textContent=v;
+let toastT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ---------- SALES (for-sale inventory) ---------- */
+const SEED_SALES=[
+  {id:'s1',title:'Volkswagen Tiguan 2020',brand:'Volkswagen',model:'Tiguan',year:2020,price:4800000,km:52000,fuel:'بنزين',gearbox:'أوتوماتيك',color:'أبيض',phone:'0555 12 34 56',wilaya:'الجزائر العاصمة',desc:'سيارة بحالة ممتازة، صيانة دورية بالوكالة، إطارات جديدة، لا تحتاج أي مصاريف.',images:['images/tiguan.jpg'],sold:false,createdAt:today()},
+  {id:'s2',title:'Volkswagen Golf 8 2021',brand:'Volkswagen',model:'Golf 8',year:2021,price:4200000,km:31000,fuel:'بنزين',gearbox:'أوتوماتيك',color:'رمادي',phone:'0661 22 33 44',wilaya:'وهران',desc:'قولف 8 نسخة كاملة، شاشة رقمية، حالة الوكالة، أول مالك.',images:['images/golf.jpg'],sold:false,createdAt:today()},
+  {id:'s3',title:'BMW X3 xDrive 2020',brand:'BMW',model:'X3',year:2020,price:9500000,km:48000,fuel:'بنزين',gearbox:'أوتوماتيك',color:'أزرق',phone:'0770 55 66 77',wilaya:'قسنطينة',desc:'BMW X3 دفع رباعي، تجهيزات كاملة، مقاعد جلد، فتحة سقف بانورامية.',images:['images/x3.jpg'],sold:false,createdAt:today()},
+  {id:'s4',title:'Dacia Duster 2019',brand:'Dacia',model:'Duster',year:2019,price:2700000,km:73000,fuel:'ديزل',gearbox:'يدوي',color:'بني',phone:'0555 88 99 00',wilaya:'سطيف',desc:'داسيا داستر ديزل اقتصادية، مناسبة للطرقات، صيانة حديثة.',images:['images/duster.jpg'],sold:true,createdAt:today()},
+  {id:'s5',title:'Hyundai Tucson 2021',brand:'Hyundai',model:'Tucson',year:2021,price:4600000,km:38000,fuel:'بنزين',gearbox:'أوتوماتيك',color:'أبيض',phone:'0661 11 22 33',wilaya:'عنابة',desc:'توسان الجيل الجديد، تصميم عصري، حالة ممتازة، فل أوبسيون.',images:['images/tucson.jpg'],sold:false,createdAt:today()},
+  {id:'s6',title:'Audi Q5 2019',brand:'Audi',model:'Q5',year:2019,price:7800000,km:56000,fuel:'بنزين',gearbox:'أوتوماتيك',color:'فضي',phone:'0770 44 55 66',wilaya:'البليدة',desc:'أودي Q5 كواترو، فل أوبسيون، صيانة بالوكالة، بحالة الجديدة.',images:['images/q5.jpg'],sold:false,createdAt:today()},
+];
+let sales=LS.get('sales',null); if(!sales||LS.get('salesVer')!=='dz1'){sales=SEED_SALES;LS.set('sales',sales);LS.set('salesVer','dz1');}
+const saveSales=()=>LS.set('sales',sales);
+let saleImages=[]; let editingSale=null;
+
+document.getElementById('slImages').addEventListener('change',e=>{
+  const files=[...e.target.files];e.target.value='';
+  files.forEach(f=>{const r=new FileReader();r.onload=()=>downscale(r.result,1000,d=>{saleImages.push(d);renderSaleThumbs();});r.readAsDataURL(f);});
+});
+function renderSaleThumbs(){document.getElementById('slThumbs').innerHTML=saleImages.map((d,i)=>`<div class="t"><img src="${d}"><button onclick="removeSaleImage(${i})">&times;</button></div>`).join('');}
+function removeSaleImage(i){saleImages.splice(i,1);renderSaleThumbs();}
+
+function renderSalesKpis(){
+  const sold=sales.filter(s=>s.sold).length;
+  const stock=sales.filter(s=>!s.sold).reduce((a,s)=>a+ (s.price||0),0);
+  const k=[
+    {n:sales.length,l:'إجمالي الإعلانات',c:'blue',ic:'<path d="M3 13l2-5h14l2 5M5 13h14v5H5z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/>'},
+    {n:sales.length-sold,l:'متوفرة للبيع',c:'green',ic:'<path d="M20 6L9 17l-5-5"/>'},
+    {n:sold,l:'مباعة',c:'red',ic:'<path d="M18 6 6 18M6 6l12 12"/>'},
+    {n:nf(stock)+' دج',l:'قيمة المخزون المتوفر',c:'indigo',ic:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'},
+  ];
+  document.getElementById('skpis').innerHTML=k.map(x=>`<div class="kpi"><div class="ic ${x.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">${x.ic}</svg></div><div><div class="n">${x.n}</div><div class="l">${x.l}</div></div></div>`).join('');
+}
+function renderSales(){
+  renderSalesKpis();
+  const rows=document.getElementById('saleRows');
+  document.getElementById('saleEmpty').style.display=sales.length?'none':'block';
+  rows.innerHTML=sales.map(s=>{
+    const img=(s.images&&s.images[0])||'';
+    const st=s.sold?`<span class="pill" style="background:var(--redbg);color:var(--red)">مباعة</span>`:`<span class="pill" style="background:var(--greenbg);color:var(--green)">متوفرة</span>`;
+    return `<tr>
+      <td>${img?`<img class="sale-thumb" src="${img}">`:'—'}</td>
+      <td><b>${esc(s.title)}</b><br><span style="color:var(--muted);font-size:12px">${esc(s.wilaya||'')}</span></td>
+      <td><b>${money(s.price)}</b></td><td>${s.year||'—'}</td><td>${st}</td>
+      <td style="white-space:nowrap">
+        <button class="btn sm" onclick="location.hash='#/car/${s.id}'">معاينة</button>
+        <button class="btn sm" onclick="toggleSold('${s.id}')">${s.sold?'إلغاء البيع':'تحديد كمباعة'}</button>
+        <button class="btn sm" onclick="editSale('${s.id}')">تعديل</button>
+        <button class="btn danger sm" onclick="delSale('${s.id}')">حذف</button>
+      </td></tr>`;
+  }).join('');
+}
+function saveSale(){
+  const al=document.getElementById('slAlert');al.classList.remove('show');
+  const err=m=>{al.textContent=m;al.classList.add('show');};
+  const title=val('slTitle'),price=+val('slPrice')||0;
+  if(!title)return err('⚠️ عنوان الإعلان مطلوب.');
+  if(!price)return err('⚠️ السعر مطلوب.');
+  const data={title,brand:val('slBrand'),model:val('slModel'),year:+val('slYear')||'',price,km:+val('slKm')||0,
+    fuel:document.getElementById('slFuel').value,gearbox:document.getElementById('slGear').value,color:val('slColor'),
+    phone:val('slPhone'),wilaya:val('slWilaya'),desc:document.getElementById('slDesc').value.trim()};
+  if(editingSale){const s=sales.find(x=>x.id===editingSale);Object.assign(s,data);if(saleImages.length)s.images=[...saleImages];toast('✅ تم تحديث الإعلان');}
+  else{sales.unshift({id:'s'+Date.now(),...data,images:[...saleImages],sold:false,createdAt:today()});toast('✅ تم إضافة السيارة للبيع');}
+  saveSales();resetSaleForm();renderSales();
+}
+function editSale(id){
+  const s=sales.find(x=>x.id===id);if(!s)return;
+  set('slTitle',s.title);set('slBrand',s.brand||'');set('slModel',s.model||'');set('slYear',s.year||'');
+  set('slPrice',s.price||'');set('slKm',s.km||'');set('slColor',s.color||'');
+  document.getElementById('slFuel').value=s.fuel||'بنزين';document.getElementById('slGear').value=s.gearbox||'أوتوماتيك';
+  set('slWilaya',s.wilaya||'');set('slPhone',s.phone||'');document.getElementById('slDesc').value=s.desc||'';
+  saleImages=(s.images||[]).slice();renderSaleThumbs();editingSale=id;
+  document.getElementById('saleFormTitle').textContent='تعديل سيارة للبيع';
+  document.getElementById('saleSaveLabel').textContent='حفظ التعديل';
+  document.getElementById('saleCancelBtn').style.display='';
+  document.getElementById('slAlert').classList.remove('show');window.scrollTo(0,0);
+}
+function resetSaleForm(){
+  ['slTitle','slBrand','slModel','slYear','slPrice','slKm','slColor','slWilaya','slPhone'].forEach(x=>set(x,''));
+  document.getElementById('slDesc').value='';document.getElementById('slFuel').value='بنزين';document.getElementById('slGear').value='أوتوماتيك';
+  saleImages=[];renderSaleThumbs();editingSale=null;
+  document.getElementById('saleFormTitle').textContent='إضافة سيارة للبيع';
+  document.getElementById('saleSaveLabel').textContent='إضافة السيارة';
+  document.getElementById('saleCancelBtn').style.display='none';document.getElementById('slAlert').classList.remove('show');
+}
+function toggleSold(id){const s=sales.find(x=>x.id===id);if(!s)return;s.sold=!s.sold;saveSales();renderSales();toast(s.sold?'تم تحديدها كمباعة':'أصبحت متوفرة');}
+function delSale(id){if(!confirm('حذف هذا الإعلان؟'))return;sales=sales.filter(s=>s.id!==id);saveSales();renderSales();toast('تم حذف الإعلان');}
+
+/* ---------- PUBLIC storefront ---------- */
+function renderPublicList(){
+  const cards=sales.map(s=>{
+    const cover=(s.images&&s.images[0])||'';
+    return `<article class="listing ${s.sold?'sold':''}" onclick="location.hash='#/car/${s.id}'">
+      <div class="lt">${cover?`<img src="${cover}" alt="${esc(s.title)}">`:'<div class="noimg">لا توجد صورة</div>'}${s.sold?'<span class="ribbon">مباعة</span>':''}</div>
+      <div class="lb">
+        <div class="lprice">${money(s.price)}</div>
+        <h3>${esc(s.title)}</h3>
+        <div class="lmeta"><span>${s.year||''}</span><span>${nf(s.km)} كم</span><span>${esc(s.fuel||'')}</span><span>${esc(s.gearbox||'')}</span></div>
+        <div class="lloc">📍 ${esc(s.wilaya||'الجزائر')}</div>
+      </div>
+    </article>`;
+  }).join('');
+  document.getElementById('pubBody').innerHTML=`<div class="pub-hero"><h2>سيارات للبيع</h2><p>${sales.filter(s=>!s.sold).length} سيارة متوفرة من معرض ماستر كارز</p></div>
+    <div class="pub-grid">${cards||'<p>لا توجد سيارات معروضة حالياً.</p>'}</div>`;
+  window.scrollTo(0,0);
+}
+function renderPublicDetails(id){
+  const s=sales.find(x=>x.id===id);const body=document.getElementById('pubBody');
+  if(!s){body.innerHTML=`<button class="pub-back" onclick="location.hash='#/showroom'">→ رجوع</button><p>الإعلان غير موجود.</p>`;return;}
+  const imgs=(s.images&&s.images.length)?s.images:[];
+  const specs=[['الماركة',s.brand],['الموديل',s.model],['السنة',s.year],['الكيلومتراج',nf(s.km)+' كم'],['الطاقة',s.fuel],['ناقل الحركة',s.gearbox],['اللون',s.color],['الحالة',s.sold?'مباعة':'متوفرة']];
+  const waPhone='213'+(s.phone||'').replace(/\D/g,'').replace(/^0/,'');
+  body.innerHTML=`
+   <button class="pub-back" onclick="location.hash='#/showroom'">→ رجوع إلى القائمة</button>
+   <div class="detail-grid">
+     <div>
+       <div class="gallery">
+         <div class="gmain">${imgs[0]?`<img id="gMainImg" src="${imgs[0]}" alt="${esc(s.title)}">`:'<div class="noimg">لا توجد صورة</div>'}${s.sold?'<div class="sold-banner"><span>مباعة</span></div>':''}</div>
+         ${imgs.length>1?`<div class="gthumbs">${imgs.map((im,i)=>`<img src="${im}" class="${i===0?'active':''}" onclick="setMainImg(this)">`).join('')}</div>`:''}
+       </div>
+       <div class="d-block"><h3>المواصفات</h3>
+         <div class="spec-grid">${specs.map(([l,v])=>`<div class="s"><span>${l}</span><b>${esc((v===0||v)?v:'—')}</b></div>`).join('')}</div>
+       </div>
+       ${s.desc?`<div class="d-block"><h3>الوصف</h3><p>${esc(s.desc)}</p></div>`:''}
+     </div>
+     <aside class="side">
+       <div class="price-card">
+         <div class="t">${esc(s.title)}</div>
+         <div class="p">${money(s.price)}</div>
+         <div class="st">${s.sold?'<span class="pill" style="background:var(--redbg);color:var(--red)">مباعة</span>':'<span class="pill" style="background:var(--greenbg);color:var(--green)">متوفرة للبيع</span>'}</div>
+       </div>
+       <div class="contact-card">
+         <h4>البائع</h4>
+         <div class="seller"><div class="s-logo">MC</div><div><b>Master Cars</b><small>${esc(s.wilaya||'الجزائر')}</small></div></div>
+         ${s.sold?`<div style="padding:13px 15px;border-radius:11px;background:var(--line2);color:var(--muted);font-weight:600;text-align:center">تم بيع هذه السيارة</div>`:
+           `<a class="btn call block" style="margin-bottom:10px" href="tel:${(s.phone||'').replace(/\s/g,'')}">📞 ${esc(s.phone||'—')}</a>
+            <a class="btn wa block" href="https://wa.me/${waPhone}" target="_blank" rel="noopener">واتساب</a>`}
+       </div>
+     </aside>
+   </div>`;
+  window.scrollTo(0,0);
+}
+function setMainImg(el){document.getElementById('gMainImg').src=el.src;document.querySelectorAll('.gthumbs img').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+
+/* ---------- router ---------- */
+function route(){
+  const h=location.hash;const pub=document.getElementById('publicApp');
+  if(h.indexOf('#/car/')===0){pub.style.display='block';renderPublicDetails(h.slice(6));}
+  else if(h==='#/showroom'){pub.style.display='block';renderPublicList();}
+  else{pub.style.display='none';}
+}
+window.addEventListener('hashchange',route);
+
+/* ---------- self-check ---------- */
+(function(){console.assert(overlaps('2024-06-12','2024-06-20','2024-06-15','2024-06-25')===true);
+console.assert(overlaps('2024-06-12','2024-06-20','2024-06-21','2024-06-25')===false);
+console.assert(overlaps('2024-06-12','2024-06-20','2024-06-20','2024-06-25')===true);
+console.assert(days('2024-06-12','2024-06-14')===3);console.assert(nf(45000)==='45 000');})();
+
+/* ---------- boot ---------- */
+renderFleet();renderBookings();renderAgents();populateAgentList();updatePreview();renderSales();route();
+</script>
+</body>
+</html>

@@ -19,7 +19,8 @@ app.get("/", (req: Request, res: Response) => {
 
 import router from "./routes/router";
 
-app.use("/api", router);
+const BASE = process.env.API_BASE_PATH ?? "";
+app.use(`${BASE}/api`, router);
 app.use(errorMiddleware);
 
 const port = process.env.PORT || 4000;

@@ -40,6 +40,51 @@ export type Sale = {
   createdAt: string;
 };
 
-export type User = { id: string; name: string; email: string; role: string };
+export type Role = "SUPER_ADMIN" | "OWNER" | "AGENT";
 
-export type Settings = { id: number; logo: string | null; cover: string | null; updatedAt: string };
+export type User = { id: string; name: string; email: string; role: Role; agencyId: string | null };
+
+export type AgencyModules = {
+  id: string;
+  name: string;
+  slug: string;
+  rentalsEnabled: boolean;
+  salesEnabled: boolean;
+  active: boolean;
+};
+
+export type Me = {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  agency: AgencyModules | null;
+};
+
+export type Agency = {
+  id: string;
+  name: string;
+  slug: string;
+  city?: string | null;
+  phone?: string | null;
+  active: boolean;
+  rentalsEnabled: boolean;
+  salesEnabled: boolean;
+  createdAt: string;
+  ownerName?: string | null;
+  ownerEmail?: string | null;
+  cars: number;
+  sales: number;
+};
+
+export type PublicAgency = {
+  name: string;
+  slug: string;
+  city?: string | null;
+  phone?: string | null;
+  salesEnabled: boolean;
+  logo: string | null;
+  cover: string | null;
+};
+
+export type Settings = { id: string; agencyId: string; logo: string | null; cover: string | null; updatedAt: string };

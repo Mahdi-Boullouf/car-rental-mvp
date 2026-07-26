@@ -1,6 +1,9 @@
-import type { Booking, Car, Sale, Settings, User } from "../types";
+import type { Agency, Booking, Car, Me, PublicAgency, Sale, Settings, User } from "../types";
 
-const ORIGIN = (import.meta.env.VITE_API_URL as string) || "";
+// VITE_API_URL may be a full URL or a bare host (Render injects the host);
+// normalize to an https origin. Empty in dev -> Vite proxy handles /api.
+const RAW = ((import.meta.env.VITE_API_URL as string) || "").trim().replace(/\/$/, "");
+const ORIGIN = RAW && !/^https?:\/\//i.test(RAW) ? `https://${RAW}` : RAW;
 const BASE = ORIGIN + "/api";
 
 const TOKEN_KEY = "mc_token";
@@ -33,7 +36,18 @@ async function req<T>(path: string, opts: Omit<RequestInit, "body"> & { body?: a
 export const api = {
   login: (email: string, password: string) =>
     req<{ token: string; user: User }>("/auth/login", { method: "POST", body: { email, password } }),
-  me: () => req<User>("/auth/me"),
+  me: () => req<Me>("/auth/me"),
+
+  // super-admin
+  agencies: () => req<Agency[]>("/agencies"),
+  createAgency: (d: any) => req<Agency>("/agencies", { method: "POST", body: d }),
+  updateAgency: (id: string, d: any) => req<Agency>(`/agencies/${id}`, { method: "PUT", body: d }),
+  deleteAgency: (id: string) => req<void>(`/agencies/${id}`, { method: "DELETE" }),
+
+  // public showroom (by slug)
+  publicAgency: (slug: string) => req<PublicAgency>(`/public/${slug}`),
+  publicSales: (slug: string) => req<Sale[]>(`/public/${slug}/sales`),
+  publicSale: (slug: string, id: string) => req<Sale>(`/public/${slug}/sales/${id}`),
 
   cars: () => req<Car[]>("/cars"),
   car: (id: string) => req<Car>(`/cars/${id}`),

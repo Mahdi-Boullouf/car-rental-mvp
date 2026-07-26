@@ -42,21 +42,44 @@ const SALES = [
 async function main() {
     copySeedImages();
 
-    // Clean slate (dev seed).
-    await prisma.booking.deleteMany();
-    await prisma.car.deleteMany();
-    await prisma.saleListing.deleteMany();
-    await prisma.user.deleteMany();
+    if (process.env.SEED_RESET === "true") {
+        await prisma.booking.deleteMany();
+        await prisma.car.deleteMany();
+        await prisma.saleListing.deleteMany();
+        await prisma.storeSettings.deleteMany();
+        await prisma.user.deleteMany();
+        await prisma.agency.deleteMany();
+    }
 
-    const password = await bcrypt.hash("admin123", 10);
-    await prisma.user.create({
-        data: { name: "المدير", email: "admin@mastercars.dz", password, role: "ADMIN" },
-    });
+    // Platform super-admin (no agency).
+    const superEmail = (process.env.SUPER_EMAIL || "super@mastercars.dz").toLowerCase();
+    if (!(await prisma.user.findUnique({ where: { email: superEmail } }))) {
+        const password = await bcrypt.hash(process.env.SUPER_PASSWORD || "super123", 10);
+        await prisma.user.create({ data: { name: "مدير المنصة", email: superEmail, password, role: "SUPER_ADMIN" } });
+    }
 
-    await prisma.car.createMany({ data: CARS });
-    await prisma.saleListing.createMany({ data: SALES });
+    // Demo agency (tenant) + its owner + demo data.
+    let agency = await prisma.agency.findUnique({ where: { slug: "master-cars" } });
+    if (!agency) {
+        agency = await prisma.agency.create({
+            data: { name: "Master Cars", slug: "master-cars", city: "الجزائر", phone: "05 00 00 00 00", rentalsEnabled: true, salesEnabled: true },
+        });
+    }
 
-    console.log("Seeded: 1 admin (admin@mastercars.dz / admin123), %d cars, %d listings", CARS.length, SALES.length);
+    const ownerEmail = (process.env.ADMIN_EMAIL || "admin@mastercars.dz").toLowerCase();
+    if (!(await prisma.user.findUnique({ where: { email: ownerEmail } }))) {
+        const password = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
+        await prisma.user.create({ data: { name: "مالك الوكالة", email: ownerEmail, password, role: "OWNER", agencyId: agency.id } });
+    }
+
+    if ((await prisma.car.count({ where: { agencyId: agency.id } })) === 0)
+        await prisma.car.createMany({ data: CARS.map((c) => ({ ...c, agencyId: agency!.id })) });
+    if ((await prisma.saleListing.count({ where: { agencyId: agency.id } })) === 0)
+        await prisma.saleListing.createMany({ data: SALES.map((s) => ({ ...s, agencyId: agency!.id })) });
+
+    await prisma.storeSettings.upsert({ where: { agencyId: agency.id }, update: {}, create: { agencyId: agency.id } });
+
+    console.log("Seed complete. Super-admin: %s | Demo agency: master-cars (owner %s)", superEmail, ownerEmail);
 }
 
 main()

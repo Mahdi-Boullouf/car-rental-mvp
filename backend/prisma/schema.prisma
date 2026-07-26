@@ -9,8 +9,28 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  AGENT
+  SUPER_ADMIN // platform owner — provisions agencies, no agencyId
+  OWNER // agency owner
+  AGENT // agency staff
+}
+
+/// A tenant: one showroom/agency. All data is scoped to it.
+model Agency {
+  id             String   @id @default(uuid())
+  name           String
+  slug           String   @unique // public URL: /<slug>
+  phone          String?
+  city           String?
+  active         Boolean  @default(true)
+  rentalsEnabled Boolean  @default(true) // module: fleet + bookings + contracts
+  salesEnabled   Boolean  @default(true) // module: sales showroom
+  createdAt      DateTime @default(now())
+
+  users    User[]
+  cars     Car[]
+  bookings Booking[]
+  sales    SaleListing[]
+  settings StoreSettings?
 }
 
 model User {
@@ -18,13 +38,17 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(AGENT)
+  role      Role     @default(OWNER)
+  agency    Agency?  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId  String? // null for SUPER_ADMIN
   createdAt DateTime @default(now())
 }
 
-/// Rental fleet (cars available to rent).
+/// Rental fleet (scoped to an agency).
 model Car {
   id           String    @id @default(uuid())
+  agency       Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId     String
   name         String
   bodyType     String
   year         Int
@@ -35,11 +59,14 @@ model Car {
   image        String
   createdAt    DateTime  @default(now())
   bookings     Booking[]
+
+  @@index([agencyId])
 }
 
-/// A rental reservation for a car over a closed date range [startDate, endDate].
 model Booking {
   id        String   @id @default(uuid())
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId  String
   car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
   carId     String
   customer  String
@@ -47,20 +74,14 @@ model Booking {
   endDate   DateTime @db.Date
   createdAt DateTime @default(now())
 
-  @@index([carId, startDate, endDate])
+  @@index([agencyId, carId, startDate, endDate])
 }
 
-/// Singleton (id = 1) holding the public showroom branding the owner can edit.
-model StoreSettings {
-  id        Int      @id @default(1)
-  logo      String?
-  cover     String?
-  updatedAt DateTime @updatedAt
-}
-
-/// A car listed for sale in the public storefront.
+/// A car listed for sale in the agency's public storefront.
 model SaleListing {
   id          String   @id @default(uuid())
+  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId    String
   title       String
   brand       String?
   model       String?
@@ -72,8 +93,20 @@ model SaleListing {
   color       String?
   phone       String?
   wilaya      String?
-  description  String?
+  description String?
   images      String[]
   sold        Boolean  @default(false)
   createdAt   DateTime @default(now())
+
+  @@index([agencyId])
+}
+
+/// Public showroom branding — one row per agency.
+model StoreSettings {
+  id        String   @id @default(uuid())
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyId  String   @unique
+  logo      String?
+  cover     String?
+  updatedAt DateTime @updatedAt
 }

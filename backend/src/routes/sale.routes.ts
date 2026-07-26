@@ -1,25 +1,19 @@
 import { Router } from "express";
 import { validate } from "../middlewares/validate";
-import { isLoggedIn } from "../middlewares/auth";
+import { requireAgency, requireModule } from "../middlewares/auth";
 import {
-    listSales,
-    getSale,
-    createSale,
-    updateSale,
-    setSold,
-    deleteSale,
-    saleSchema,
-    saleUpdateSchema,
-    soldSchema,
+    listSales, getSale, createSale, updateSale, setSold, deleteSale,
+    saleSchema, saleUpdateSchema, soldSchema,
 } from "../controllers/sale.controller";
 
 const router = Router();
+const sales = [requireAgency, requireModule("sales")];
 
-router.get("/", listSales);
-router.get("/:id", getSale);
-router.post("/", isLoggedIn, validate(saleSchema), createSale);
-router.put("/:id", isLoggedIn, validate(saleUpdateSchema), updateSale);
-router.patch("/:id/sold", isLoggedIn, validate(soldSchema), setSold);
-router.delete("/:id", isLoggedIn, deleteSale);
+router.get("/", ...sales, listSales);
+router.get("/:id", ...sales, getSale);
+router.post("/", ...sales, validate(saleSchema), createSale);
+router.put("/:id", ...sales, validate(saleUpdateSchema), updateSale);
+router.patch("/:id/sold", ...sales, validate(soldSchema), setSold);
+router.delete("/:id", ...sales, deleteSale);
 
 export default router;

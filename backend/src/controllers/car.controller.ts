@@ -16,10 +16,9 @@ export const carSchema = z.object({
 
 export const carUpdateSchema = carSchema.partial();
 
-/** Public: full rental fleet. */
 export const listCars = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cars = await prisma.car.findMany({ orderBy: { createdAt: "asc" } });
+        const cars = await prisma.car.findMany({ where: { agencyId: req.agencyId }, orderBy: { createdAt: "asc" } });
         res.json({ success: true, data: cars });
     } catch (error) {
         next(error);
@@ -28,7 +27,7 @@ export const listCars = async (req: Request, res: Response, next: NextFunction) 
 
 export const getCar = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const car = await prisma.car.findUnique({ where: { id: req.params.id } });
+        const car = await prisma.car.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!car) throw new AppError("Car not found", 404);
         res.json({ success: true, data: car });
     } catch (error) {
@@ -38,7 +37,7 @@ export const getCar = async (req: Request, res: Response, next: NextFunction) =>
 
 export const createCar = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const car = await prisma.car.create({ data: req.body });
+        const car = await prisma.car.create({ data: { ...req.body, agencyId: req.agencyId! } });
         res.status(201).json({ success: true, data: car });
     } catch (error) {
         next(error);
@@ -47,10 +46,9 @@ export const createCar = async (req: Request, res: Response, next: NextFunction)
 
 export const updateCar = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.car.findUnique({ where: { id } });
+        const existing = await prisma.car.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Car not found", 404);
-        const car = await prisma.car.update({ where: { id }, data: req.body });
+        const car = await prisma.car.update({ where: { id: existing.id }, data: req.body });
         res.json({ success: true, data: car });
     } catch (error) {
         next(error);
@@ -59,10 +57,9 @@ export const updateCar = async (req: Request, res: Response, next: NextFunction)
 
 export const deleteCar = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.car.findUnique({ where: { id } });
+        const existing = await prisma.car.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Car not found", 404);
-        await prisma.car.delete({ where: { id } });
+        await prisma.car.delete({ where: { id: existing.id } });
         res.json({ success: true, message: "Car deleted" });
     } catch (error) {
         next(error);

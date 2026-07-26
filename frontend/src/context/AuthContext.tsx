@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { api, setToken } from "../lib/api";
-import type { User } from "../types";
+import type { Me } from "../types";
 
 type AuthCtx = {
-  user: User | null;
+  user: Me | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Me>;
   logout: () => void;
 };
 
@@ -13,21 +13,19 @@ const Ctx = createContext<AuthCtx>(null as any);
 export const useAuth = () => useContext(Ctx);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .me()
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    api.me().then(setUser).catch(() => setUser(null)).finally(() => setLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { token, user } = await api.login(email, password);
+    const { token } = await api.login(email, password);
     setToken(token);
-    setUser(user);
+    const me = await api.me();
+    setUser(me);
+    return me;
   };
 
   const logout = () => {

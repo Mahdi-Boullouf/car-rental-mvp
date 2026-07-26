@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api, imgUrl } from "../../lib/api";
-import { setSettingsCache } from "../../lib/useSettings";
 import { Alert, PageHead, Spinner } from "../../components/ui";
 import { useToast } from "../../components/Toast";
 
@@ -28,7 +27,6 @@ export default function SettingsAdmin() {
       if (logoFile) logoPath = (await api.upload([logoFile])).paths[0];
       if (coverFile) coverPath = (await api.upload([coverFile])).paths[0];
       const s = await api.updateSettings({ logo: logoPath, cover: coverPath });
-      setSettingsCache(s);
       setLogo(s.logo); setCover(s.cover); setLogoFile(null); setCoverFile(null);
       toast("✅ تم حفظ إعدادات المعرض");
     } catch (e: any) {

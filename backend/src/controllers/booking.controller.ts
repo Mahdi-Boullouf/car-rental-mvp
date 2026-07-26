@@ -15,10 +15,10 @@ const fmt = (d: Date) => {
     return `${String(x.getUTCDate()).padStart(2, "0")}/${String(x.getUTCMonth() + 1).padStart(2, "0")}/${x.getUTCFullYear()}`;
 };
 
-/** Staff: all bookings, newest range first, with the car attached. */
 export const listBookings = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const bookings = await prisma.booking.findMany({
+            where: { agencyId: req.agencyId },
             include: { car: true },
             orderBy: { startDate: "desc" },
         });
@@ -41,12 +41,12 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         const end = new Date(endDate);
         if (end < start) throw new AppError("تاريخ النهاية قبل تاريخ البداية", 400);
 
-        const car = await prisma.car.findUnique({ where: { id: carId } });
+        // Car must belong to this agency.
+        const car = await prisma.car.findFirst({ where: { id: carId, agencyId: req.agencyId } });
         if (!car) throw new AppError("Car not found", 404);
 
-        // Two closed ranges overlap iff existing.start <= newEnd && existing.end >= newStart.
         const conflict = await prisma.booking.findFirst({
-            where: { carId, startDate: { lte: end }, endDate: { gte: start } },
+            where: { carId, agencyId: req.agencyId, startDate: { lte: end }, endDate: { gte: start } },
         });
         if (conflict) {
             throw new AppError(
@@ -56,7 +56,7 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         }
 
         const booking = await prisma.booking.create({
-            data: { carId, customer, startDate: start, endDate: end },
+            data: { carId, agencyId: req.agencyId!, customer, startDate: start, endDate: end },
             include: { car: true },
         });
         res.status(201).json({ success: true, data: booking });
@@ -67,10 +67,9 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
 
 export const deleteBooking = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.booking.findUnique({ where: { id } });
+        const existing = await prisma.booking.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Booking not found", 404);
-        await prisma.booking.delete({ where: { id } });
+        await prisma.booking.delete({ where: { id: existing.id } });
         res.json({ success: true, message: "Booking deleted" });
     } catch (error) {
         next(error);

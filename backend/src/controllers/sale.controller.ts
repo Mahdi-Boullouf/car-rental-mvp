@@ -22,29 +22,19 @@ export const saleSchema = z.object({
 export const saleUpdateSchema = saleSchema.partial();
 export const soldSchema = z.object({ sold: z.boolean() });
 
-/** Public: list sale listings, optional ?q= and ?status=available|sold. */
+/** Agency: its own listings. */
 export const listSales = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const q = (req.query.q as string | undefined)?.trim();
-        const status = req.query.status as string | undefined;
-        const sales = await prisma.saleListing.findMany({
-            where: {
-                ...(status === "available" ? { sold: false } : {}),
-                ...(status === "sold" ? { sold: true } : {}),
-                ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
-            },
-            orderBy: { createdAt: "desc" },
-        });
+        const sales = await prisma.saleListing.findMany({ where: { agencyId: req.agencyId }, orderBy: { createdAt: "desc" } });
         res.json({ success: true, data: sales });
     } catch (error) {
         next(error);
     }
 };
 
-/** Public: a single sale listing. */
 export const getSale = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const sale = await prisma.saleListing.findUnique({ where: { id: req.params.id } });
+        const sale = await prisma.saleListing.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!sale) throw new AppError("Listing not found", 404);
         res.json({ success: true, data: sale });
     } catch (error) {
@@ -54,7 +44,7 @@ export const getSale = async (req: Request, res: Response, next: NextFunction) =
 
 export const createSale = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const sale = await prisma.saleListing.create({ data: req.body });
+        const sale = await prisma.saleListing.create({ data: { ...req.body, agencyId: req.agencyId! } });
         res.status(201).json({ success: true, data: sale });
     } catch (error) {
         next(error);
@@ -63,10 +53,9 @@ export const createSale = async (req: Request, res: Response, next: NextFunction
 
 export const updateSale = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.saleListing.findUnique({ where: { id } });
+        const existing = await prisma.saleListing.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Listing not found", 404);
-        const sale = await prisma.saleListing.update({ where: { id }, data: req.body });
+        const sale = await prisma.saleListing.update({ where: { id: existing.id }, data: req.body });
         res.json({ success: true, data: sale });
     } catch (error) {
         next(error);
@@ -75,13 +64,9 @@ export const updateSale = async (req: Request, res: Response, next: NextFunction
 
 export const setSold = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.saleListing.findUnique({ where: { id } });
+        const existing = await prisma.saleListing.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Listing not found", 404);
-        const sale = await prisma.saleListing.update({
-            where: { id },
-            data: { sold: req.body.sold },
-        });
+        const sale = await prisma.saleListing.update({ where: { id: existing.id }, data: { sold: req.body.sold } });
         res.json({ success: true, data: sale });
     } catch (error) {
         next(error);
@@ -90,10 +75,9 @@ export const setSold = async (req: Request, res: Response, next: NextFunction) =
 
 export const deleteSale = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        const existing = await prisma.saleListing.findUnique({ where: { id } });
+        const existing = await prisma.saleListing.findFirst({ where: { id: req.params.id, agencyId: req.agencyId } });
         if (!existing) throw new AppError("Listing not found", 404);
-        await prisma.saleListing.delete({ where: { id } });
+        await prisma.saleListing.delete({ where: { id: existing.id } });
         res.json({ success: true, message: "Listing deleted" });
     } catch (error) {
         next(error);

@@ -3,24 +3,28 @@ import { Link, useParams } from "react-router-dom";
 import PublicHeader from "../../components/PublicHeader";
 import { api, imgUrl } from "../../lib/api";
 import { money, nf } from "../../lib/format";
-import type { Sale } from "../../types";
+import type { PublicAgency, Sale } from "../../types";
 
 export default function CarDetails() {
-  const { id } = useParams();
+  const { slug, id } = useParams();
+  const [agency, setAgency] = useState<PublicAgency | null>(null);
   const [sale, setSale] = useState<Sale | null | undefined>(undefined);
   const [main, setMain] = useState(0);
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug || !id) return;
     setSale(undefined);
     setMain(0);
-    api.sale(id).then(setSale).catch(() => setSale(null));
-  }, [id]);
+    api.publicAgency(slug).then(setAgency).catch(() => {});
+    api.publicSale(slug, id).then(setSale).catch(() => setSale(null));
+  }, [slug, id]);
+
+  const header = <PublicHeader name={agency?.name} logo={agency?.logo} slug={slug} />;
 
   if (sale === undefined)
     return (
       <div className="min-h-screen">
-        <PublicHeader />
+        {header}
         <div className="mx-auto max-w-[1180px] px-4 py-8 md:px-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
             <div className="skeleton aspect-[16/10] rounded-2xl" />
@@ -33,9 +37,9 @@ export default function CarDetails() {
   if (sale === null)
     return (
       <div className="min-h-screen">
-        <PublicHeader />
+        {header}
         <div className="mx-auto max-w-[1180px] px-4 py-10 md:px-6">
-          <Link to="/" className="text-muted hover:text-ink">→ رجوع</Link>
+          <Link to={`/${slug}`} className="text-muted hover:text-ink">→ رجوع</Link>
           <p className="mt-4">الإعلان غير موجود.</p>
         </div>
       </div>
@@ -52,36 +56,28 @@ export default function CarDetails() {
 
   return (
     <div className="min-h-screen">
-      <PublicHeader />
+      {header}
       <div className="mx-auto max-w-[1180px] px-4 pb-20 pt-5 md:px-6">
         <nav className="mb-4 flex items-center gap-1.5 text-sm text-muted">
-          <Link to="/" className="font-semibold hover:text-ink">المعرض</Link>
+          <Link to={`/${slug}`} className="font-semibold hover:text-ink">{agency?.name || "المعرض"}</Link>
           <span className="text-line">/</span>
           <span className="line-clamp-1 text-ink2">{sale.title}</span>
         </nav>
 
         <div className="animate-fadeup grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.6fr_1fr]">
-          {/* Gallery — desktop: col1/row1 */}
           <div className="lg:col-start-1 lg:row-start-1">
             <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-soft">
               <div className="relative aspect-[16/10] bg-line2">
                 {imgs[main] ? (
                   <img src={imgUrl(imgs[main])} alt={sale.title} className={`h-full w-full object-cover ${sale.sold ? "grayscale-[.55] brightness-95" : ""}`} />
-                ) : (
-                  <div className="grid h-full w-full place-items-center text-sm text-muted">لا توجد صورة</div>
-                )}
-                {sale.sold && (
-                  <span className="absolute start-4 top-4 rounded-lg bg-ink/85 px-4 py-1.5 text-sm font-extrabold text-white backdrop-blur">مباعة</span>
-                )}
+                ) : <div className="grid h-full w-full place-items-center text-sm text-muted">لا توجد صورة</div>}
+                {sale.sold && <span className="absolute start-4 top-4 rounded-lg bg-ink/85 px-4 py-1.5 text-sm font-extrabold text-white backdrop-blur">مباعة</span>}
               </div>
               {imgs.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto p-2.5">
                   {imgs.map((im, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setMain(i)}
-                      className={`h-16 w-[92px] flex-none overflow-hidden rounded-lg border-2 transition ${i === main ? "border-brand" : "border-transparent opacity-70 hover:opacity-100"}`}
-                    >
+                    <button key={i} onClick={() => setMain(i)}
+                      className={`h-16 w-[92px] flex-none overflow-hidden rounded-lg border-2 transition ${i === main ? "border-brand" : "border-transparent opacity-70 hover:opacity-100"}`}>
                       <img src={imgUrl(im)} className="h-full w-full object-cover" alt="" />
                     </button>
                   ))}
@@ -90,16 +86,11 @@ export default function CarDetails() {
             </div>
           </div>
 
-          {/* Price + contact — desktop: col2 sticky; mobile: right under the photo */}
           <aside className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-20">
             <div className="rounded-2xl border border-line bg-white p-5 shadow-soft md:p-6">
               <h1 className="text-lg font-extrabold leading-snug">{sale.title}</h1>
               <div className="mt-2 text-[30px] font-extrabold leading-none text-ink">{money(sale.price)}</div>
-              <div className="mt-3">
-                {sale.sold
-                  ? <span className="pill bg-dangerbg text-danger">مباعة</span>
-                  : <span className="pill bg-okbg text-ok">متوفرة للبيع</span>}
-              </div>
+              <div className="mt-3">{sale.sold ? <span className="pill bg-dangerbg text-danger">مباعة</span> : <span className="pill bg-okbg text-ok">متوفرة للبيع</span>}</div>
               <div className="mt-3 flex items-center gap-1.5 text-[13px] text-muted">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-6.3-7-11a7 7 0 0114 0c0 4.7-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
                 {sale.wilaya || "الجزائر"}
@@ -108,10 +99,10 @@ export default function CarDetails() {
 
             <div className="rounded-2xl border border-line bg-white p-5 shadow-soft md:p-6">
               <div className="mb-4 flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-grad-brand text-sm font-extrabold text-white">MC</div>
+                <div className="grid h-11 w-11 place-items-center rounded-xl bg-grad-brand text-sm font-extrabold text-white">{(agency?.name || "MC").slice(0, 2).toUpperCase()}</div>
                 <div>
-                  <b className="text-[15px]">Master Cars</b>
-                  <small className="block text-[12.5px] text-muted">معرض السيارات — {sale.wilaya || "الجزائر"}</small>
+                  <b className="text-[15px]">{agency?.name || "المعرض"}</b>
+                  <small className="block text-[12.5px] text-muted">{agency?.city || sale.wilaya || "الجزائر"}</small>
                 </div>
               </div>
               {sale.sold ? (
@@ -131,20 +122,17 @@ export default function CarDetails() {
             </div>
           </aside>
 
-          {/* Specs + description — desktop: col1/row2 */}
           <div className="space-y-5 lg:col-start-1 lg:row-start-2">
             <div className="rounded-2xl border border-line bg-white p-5 shadow-soft md:p-6">
               <h3 className="mb-4 text-base font-extrabold">المواصفات</h3>
               <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
                 {specs.map(([l, v], i) => (
                   <div key={i} className="flex items-center justify-between border-b border-line2 py-3 text-sm">
-                    <span className="text-muted">{l}</span>
-                    <b className="font-bold">{v === 0 || v ? v : "—"}</b>
+                    <span className="text-muted">{l}</span><b className="font-bold">{v === 0 || v ? v : "—"}</b>
                   </div>
                 ))}
               </div>
             </div>
-
             {sale.description && (
               <div className="rounded-2xl border border-line bg-white p-5 shadow-soft md:p-6">
                 <h3 className="mb-3 text-base font-extrabold">الوصف</h3>

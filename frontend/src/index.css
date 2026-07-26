@@ -1,0 +1,52 @@
+@font-face { font-family: 'Tajawal'; font-weight: 400; font-display: swap; src: url('/fonts/tajawal-latin-400.woff2') format('woff2'); }
+@font-face { font-family: 'Tajawal'; font-weight: 400; font-display: swap; src: url('/fonts/tajawal-arabic-400.woff2') format('woff2'); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF; }
+@font-face { font-family: 'Tajawal'; font-weight: 500; font-display: swap; src: url('/fonts/tajawal-latin-500.woff2') format('woff2'); }
+@font-face { font-family: 'Tajawal'; font-weight: 500; font-display: swap; src: url('/fonts/tajawal-arabic-500.woff2') format('woff2'); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF; }
+@font-face { font-family: 'Tajawal'; font-weight: 700; font-display: swap; src: url('/fonts/tajawal-latin-700.woff2') format('woff2'); }
+@font-face { font-family: 'Tajawal'; font-weight: 700; font-display: swap; src: url('/fonts/tajawal-arabic-700.woff2') format('woff2'); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF; }
+@font-face { font-family: 'Tajawal'; font-weight: 800; font-display: swap; src: url('/fonts/tajawal-latin-800.woff2') format('woff2'); }
+@font-face { font-family: 'Tajawal'; font-weight: 800; font-display: swap; src: url('/fonts/tajawal-arabic-800.woff2') format('woff2'); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF; }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-[#e9edf4] text-ink font-sans antialiased;
+    background-image: radial-gradient(900px 520px at 100% -8%, #e3ebfb 0%, transparent 55%),
+      radial-gradient(760px 520px at -5% 2%, #edf0f7 0%, transparent 52%);
+  }
+  /* Accessible focus ring (never removed) */
+  :focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.35); border-radius: 8px; }
+}
+
+@keyframes mc-fadeup { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes mc-shimmer { 100% { transform: translateX(100%); } }
+
+@layer utilities {
+  .animate-fadeup { animation: mc-fadeup .55s cubic-bezier(.22,.61,.36,1) both; }
+  .skeleton { position: relative; overflow: hidden; background: #e6eaf1; }
+  .skeleton::after {
+    content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+    animation: mc-shimmer 1.5s infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeup { animation: none !important; }
+  .skeleton::after { animation: none !important; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-bold text-ink transition min-h-[44px] hover:bg-line2; }
+  .btn-primary { @apply bg-grad-brand text-white border-transparent shadow-[0_6px_16px_rgba(47,107,255,.28)] hover:brightness-110; }
+  .btn-danger { @apply text-danger border-line hover:bg-dangerbg; }
+  .btn-sm { @apply px-3 py-2 text-[13px] min-h-0; }
+  .input { @apply w-full rounded-xl border border-line bg-white px-3.5 py-3 text-[15px] text-ink placeholder:text-muted focus:border-brand focus:shadow-[0_0_0_3px_rgba(47,107,255,.14)] outline-none; }
+  .label { @apply mb-1.5 block text-[13px] font-bold text-ink2; }
+  .card { @apply rounded-xl2 border border-line bg-white shadow-soft; }
+  .pill { @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-extrabold; }
+}

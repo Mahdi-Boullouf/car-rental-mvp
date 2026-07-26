@@ -1,0 +1,79 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(AGENT)
+  createdAt DateTime @default(now())
+}
+
+/// Rental fleet (cars available to rent).
+model Car {
+  id           String    @id @default(uuid())
+  name         String
+  bodyType     String
+  year         Int
+  fuel         String
+  transmission String
+  seats        Int
+  pricePerDay  Int
+  image        String
+  createdAt    DateTime  @default(now())
+  bookings     Booking[]
+}
+
+/// A rental reservation for a car over a closed date range [startDate, endDate].
+model Booking {
+  id        String   @id @default(uuid())
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId     String
+  customer  String
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+  createdAt DateTime @default(now())
+
+  @@index([carId, startDate, endDate])
+}
+
+/// Singleton (id = 1) holding the public showroom branding the owner can edit.
+model StoreSettings {
+  id        Int      @id @default(1)
+  logo      String?
+  cover     String?
+  updatedAt DateTime @updatedAt
+}
+
+/// A car listed for sale in the public storefront.
+model SaleListing {
+  id          String   @id @default(uuid())
+  title       String
+  brand       String?
+  model       String?
+  year        Int?
+  price       Int
+  km          Int?
+  fuel        String?
+  gearbox     String?
+  color       String?
+  phone       String?
+  wilaya      String?
+  description  String?
+  images      String[]
+  sold        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

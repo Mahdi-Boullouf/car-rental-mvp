@@ -9,6 +9,7 @@
     "start": "node dist/main.js",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "setup": "prisma generate && tsc && prisma migrate deploy && ts-node --transpile-only prisma/seed.ts",
     "seed": "ts-node --transpile-only prisma/seed.ts",
     "prisma:generate": "prisma generate"
   },

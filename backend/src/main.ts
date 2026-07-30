@@ -7,6 +7,14 @@ import cors from "cors";
 import path from "path";
 import { errorMiddleware } from "./middlewares/error";
 
+// Without this, every login 500s on jwt.sign() with a generic "Internal server
+// error" — the health check and all public routes keep working, so the service
+// looks healthy while nobody can log in. Fail at boot instead.
+if (!process.env.JWT) {
+    console.error("FATAL: JWT env var is not set — logins would fail at runtime. Set it and redeploy.");
+    process.exit(1);
+}
+
 const app = express();
 
 // A browser's Origin header never carries a trailing slash, but a URL pasted into

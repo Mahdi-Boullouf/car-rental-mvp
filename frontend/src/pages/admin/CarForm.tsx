@@ -4,9 +4,9 @@ import { api, imgUrl } from "../../lib/api";
 import { Alert, PageHead, Spinner } from "../../components/ui";
 import { useToast } from "../../components/Toast";
 
-const BODY_TYPES = ["SUV فاخر", "SUV عائلي", "SUV مدمج", "SUV اقتصادي", "سيدان", "هاتشباك", "كوبيه", "بيك أب", "ميني فان"];
-const FUELS = ["بنزين", "ديزل", "هجين", "كهرباء"];
-const TRANSMISSIONS = ["أوتوماتيك", "يدوي"];
+const BODY_TYPES = ["SUV de luxe", "SUV familial", "SUV compact", "SUV économique", "Berline", "Citadine", "Coupé", "Pick-up", "Monospace"];
+const FUELS = ["Essence", "Diesel", "Hybride", "Électrique"];
+const TRANSMISSIONS = ["Automatique", "Manuelle"];
 const SEATS = [2, 4, 5, 7, 8, 9];
 
 const currentYear = new Date().getFullYear();
@@ -20,10 +20,10 @@ export default function CarForm() {
   const [loading, setLoading] = useState(editing);
   const [f, setF] = useState({
     name: "",
-    bodyType: "SUV عائلي",
+    bodyType: "SUV familial",
     year: String(currentYear),
-    fuel: "بنزين",
-    transmission: "أوتوماتيك",
+    fuel: "Essence",
+    transmission: "Automatique",
     seats: "5",
     pricePerDay: "",
   });
@@ -48,7 +48,7 @@ export default function CarForm() {
         });
         setImage(c.image);
       })
-      .catch(() => setErr("تعذّر تحميل السيارة"))
+      .catch(() => setErr("Impossible de charger la voiture"))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -57,13 +57,13 @@ export default function CarForm() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setErr("");
-    if (!f.name.trim()) return setErr("اسم السيارة مطلوب.");
-    if (!f.pricePerDay || Number(f.pricePerDay) <= 0) return setErr("أدخل سعراً يومياً صحيحاً.");
+    if (!f.name.trim()) return setErr("Le nom de la voiture est requis.");
+    if (!f.pricePerDay || Number(f.pricePerDay) <= 0) return setErr("Saisissez un tarif journalier valide.");
     setBusy(true);
     try {
       let img = image;
       if (file) img = (await api.upload([file])).paths[0];
-      if (!img) throw new Error("الرجاء اختيار صورة للسيارة.");
+      if (!img) throw new Error("Veuillez choisir une photo de la voiture.");
       const payload = {
         name: f.name.trim(),
         bodyType: f.bodyType,
@@ -76,7 +76,7 @@ export default function CarForm() {
       };
       if (editing) await api.updateCar(id!, payload);
       else await api.createCar(payload);
-      toast(editing ? "✅ تم حفظ التعديلات" : "✅ تمت إضافة السيارة");
+      toast(editing ? "✅ Modifications enregistrées" : "✅ Voiture ajoutée");
       nav("/admin");
     } catch (e: any) {
       setErr(e.message);
@@ -91,43 +91,43 @@ export default function CarForm() {
 
   return (
     <>
-      <Link to="/admin" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-muted hover:text-ink">→ رجوع إلى الأسطول</Link>
+      <Link to="/admin" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-muted hover:text-ink">← Retour à la flotte</Link>
       <PageHead
-        title={editing ? "تعديل سيارة" : "إضافة سيارة للأسطول"}
-        subtitle="جميع الحقول محددة — اختر القيم من القوائم لضمان بيانات موحّدة."
+        title={editing ? "Modifier la voiture" : "Ajouter une voiture à la flotte"}
+        subtitle="Tous les champs sont guidés — choisissez dans les listes pour garder des données homogènes."
       />
 
       <form onSubmit={submit} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.4fr_.9fr]">
         {/* fields */}
         <div className="card p-6">
-          <div className="mb-5 border-b border-line2 pb-3 text-[15px] font-extrabold">بيانات السيارة</div>
+          <div className="mb-5 border-b border-line2 pb-3 text-[15px] font-extrabold">Informations sur la voiture</div>
 
-          <label className="label">اسم السيارة</label>
+          <label className="label">Nom de la voiture</label>
           <input className="input" value={f.name} onChange={up("name")} placeholder="Volkswagen Tiguan" />
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="نوع الهيكل">
+            <Field label="Type de carrosserie">
               <select className="input" value={f.bodyType} onChange={up("bodyType")}>
                 {BODY_TYPES.map((b) => <option key={b}>{b}</option>)}
               </select>
             </Field>
-            <Field label="سنة الصنع">
+            <Field label="Année">
               <input className="input" type="number" min={1950} max={2100} value={f.year} onChange={up("year")} />
             </Field>
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Field label="نوع الوقود">
+            <Field label="Carburant">
               <select className="input" value={f.fuel} onChange={up("fuel")}>
                 {FUELS.map((x) => <option key={x}>{x}</option>)}
               </select>
             </Field>
-            <Field label="ناقل الحركة">
+            <Field label="Boîte de vitesses">
               <select className="input" value={f.transmission} onChange={up("transmission")}>
                 {TRANSMISSIONS.map((x) => <option key={x}>{x}</option>)}
               </select>
             </Field>
-            <Field label="عدد المقاعد">
+            <Field label="Nombre de places">
               <select className="input" value={f.seats} onChange={up("seats")}>
                 {SEATS.map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
@@ -135,7 +135,7 @@ export default function CarForm() {
           </div>
 
           <div className="mt-4">
-            <Field label="السعر اليومي للإيجار (دج)">
+            <Field label="Tarif journalier (DA)">
               <input className="input" type="number" min={0} value={f.pricePerDay} onChange={up("pricePerDay")} placeholder="11000" />
             </Field>
           </div>
@@ -143,23 +143,23 @@ export default function CarForm() {
           {err && <Alert>{err}</Alert>}
 
           <div className="mt-6 flex gap-3">
-            <button className="btn btn-primary" disabled={busy}>{busy ? "جارٍ الحفظ…" : editing ? "حفظ التعديلات" : "إضافة السيارة"}</button>
-            <Link to="/admin" className="btn">إلغاء</Link>
+            <button className="btn btn-primary" disabled={busy}>{busy ? "Enregistrement…" : editing ? "Enregistrer" : "Ajouter la voiture"}</button>
+            <Link to="/admin" className="btn">Annuler</Link>
           </div>
         </div>
 
         {/* image */}
         <div className="card p-6">
-          <div className="mb-4 text-[15px] font-extrabold">صورة السيارة</div>
+          <div className="mb-4 text-[15px] font-extrabold">Photo de la voiture</div>
           <div className="mb-4 aspect-[16/10] overflow-hidden rounded-xl border border-line bg-line2">
             {preview ? (
               <img src={preview} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="grid h-full w-full place-items-center text-sm text-muted">لا توجد صورة بعد</div>
+              <div className="grid h-full w-full place-items-center text-sm text-muted">Aucune photo</div>
             )}
           </div>
           <label className="btn w-full cursor-pointer">
-            {preview ? "تغيير الصورة" : "اختيار صورة"}
+            {preview ? "Changer la photo" : "Choisir une photo"}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           </label>
         </div>

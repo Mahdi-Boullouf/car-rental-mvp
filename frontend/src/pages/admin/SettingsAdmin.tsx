@@ -28,7 +28,7 @@ export default function SettingsAdmin() {
       if (coverFile) coverPath = (await api.upload([coverFile])).paths[0];
       const s = await api.updateSettings({ logo: logoPath, cover: coverPath });
       setLogo(s.logo); setCover(s.cover); setLogoFile(null); setCoverFile(null);
-      toast("✅ تم حفظ إعدادات المعرض");
+      toast("✅ Paramètres enregistrés");
     } catch (e: any) {
       setErr(e.message);
     } finally {
@@ -43,12 +43,12 @@ export default function SettingsAdmin() {
 
   return (
     <>
-      <PageHead title="إعدادات المعرض" subtitle="الشعار وصورة الغلاف اللذان يظهران في أعلى صفحة البيع العامة." />
+      <PageHead title="Paramètres de la vitrine" subtitle="Le logo et l'image de couverture affichés en haut de la vitrine publique." />
 
       <form onSubmit={submit} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* logo */}
         <div className="card p-5 sm:p-6">
-          <div className="mb-4 text-[15px] font-extrabold">الشعار (Logo)</div>
+          <div className="mb-4 text-[15px] font-extrabold">Logo</div>
           <div className="mb-4 grid h-32 place-items-center rounded-xl border border-line bg-line2 p-4">
             {logoPreview ? (
               <img src={logoPreview} alt="logo" className="max-h-24 w-auto object-contain" />
@@ -58,37 +58,37 @@ export default function SettingsAdmin() {
           </div>
           <div className="flex gap-2">
             <label className="btn flex-1 cursor-pointer">
-              {logoPreview ? "تغيير الشعار" : "اختيار شعار"}
+              {logoPreview ? "Changer le logo" : "Choisir un logo"}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
             </label>
-            {(logoPreview) && <button type="button" className="btn btn-danger" onClick={() => { setLogo(null); setLogoFile(null); }}>إزالة</button>}
+            {(logoPreview) && <button type="button" className="btn btn-danger" onClick={() => { setLogo(null); setLogoFile(null); }}>Retirer</button>}
           </div>
-          <p className="mt-2 text-xs text-muted">يُنصح بصورة PNG بخلفية شفافة.</p>
+          <p className="mt-2 text-xs text-muted">Un PNG à fond transparent est recommandé.</p>
         </div>
 
         {/* cover */}
         <div className="card p-5 sm:p-6">
-          <div className="mb-4 text-[15px] font-extrabold">صورة الغلاف (Cover)</div>
+          <div className="mb-4 text-[15px] font-extrabold">Image de couverture</div>
           <div className="mb-4 aspect-[16/7] overflow-hidden rounded-xl border border-line bg-line2">
             {coverPreview ? (
               <img src={coverPreview} alt="cover" className="h-full w-full object-cover" />
             ) : (
-              <div className="grid h-full w-full place-items-center bg-grad-navy text-sm text-white/70">الغلاف الافتراضي (تدرّج لوني)</div>
+              <div className="grid h-full w-full place-items-center bg-grad-navy text-sm text-white/70">Couverture par défaut (dégradé)</div>
             )}
           </div>
           <div className="flex gap-2">
             <label className="btn flex-1 cursor-pointer">
-              {coverPreview ? "تغيير الغلاف" : "اختيار غلاف"}
+              {coverPreview ? "Changer la couverture" : "Choisir une couverture"}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} />
             </label>
-            {(coverPreview) && <button type="button" className="btn btn-danger" onClick={() => { setCover(null); setCoverFile(null); }}>إزالة</button>}
+            {(coverPreview) && <button type="button" className="btn btn-danger" onClick={() => { setCover(null); setCoverFile(null); }}>Retirer</button>}
           </div>
-          <p className="mt-2 text-xs text-muted">صورة عريضة (مثال 1600×700) تظهر خلف عنوان المعرض.</p>
+          <p className="mt-2 text-xs text-muted">Image large (ex. 1600×700) affichée derrière le titre de la vitrine.</p>
         </div>
 
         {err && <div className="lg:col-span-2"><Alert>{err}</Alert></div>}
         <div className="lg:col-span-2">
-          <button className="btn btn-primary w-full sm:w-auto" disabled={busy}>{busy ? "جارٍ الحفظ…" : "حفظ الإعدادات"}</button>
+          <button className="btn btn-primary w-full sm:w-auto" disabled={busy}>{busy ? "Enregistrement…" : "Enregistrer"}</button>
         </div>
       </form>
     </>

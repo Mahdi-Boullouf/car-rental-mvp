@@ -17,47 +17,47 @@ export default function SalesAdmin() {
     const sold = list.filter((s) => s.sold).length;
     const stock = list.filter((s) => !s.sold).reduce((a, s) => a + s.price, 0);
     return [
-      { n: list.length, l: "إجمالي الإعلانات", c: "blue", icon: <I d="M3 9l1.6-5h14.8L21 9M4 9h16v10a1 1 0 01-1 1H5a1 1 0 01-1-1V9z" /> },
-      { n: list.length - sold, l: "متوفرة للبيع", c: "green", icon: <I d="M20 6L9 17l-5-5" /> },
-      { n: sold, l: "مباعة", c: "red", icon: <I d="M18 6 6 18M6 6l12 12" /> },
-      { n: nf(stock) + " دج", l: "قيمة المخزون المتوفر", c: "indigo", icon: <I d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /> },
+      { n: list.length, l: "Total annonces", c: "blue", icon: <I d="M3 9l1.6-5h14.8L21 9M4 9h16v10a1 1 0 01-1 1H5a1 1 0 01-1-1V9z" /> },
+      { n: list.length - sold, l: "Disponible à la vente", c: "green", icon: <I d="M20 6L9 17l-5-5" /> },
+      { n: sold, l: "Vendue", c: "red", icon: <I d="M18 6 6 18M6 6l12 12" /> },
+      { n: nf(stock) + " DA", l: "Valeur du stock disponible", c: "indigo", icon: <I d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /> },
     ];
   }, [sales]);
 
   if (!sales) return <Spinner />;
 
-  const toggle = async (s: Sale) => { await api.setSold(s.id, !s.sold); toast(!s.sold ? "تم تحديدها كمباعة" : "أصبحت متوفرة"); load(); };
-  const del = async (s: Sale) => { if (confirm("حذف هذا الإعلان؟")) { await api.deleteSale(s.id); toast("تم حذف الإعلان"); load(); } };
+  const toggle = async (s: Sale) => { await api.setSold(s.id, !s.sold); toast(!s.sold ? "Marquée comme vendue" : "Remise en vente"); load(); };
+  const del = async (s: Sale) => { if (confirm("Supprimer cette annonce ?")) { await api.deleteSale(s.id); toast("Annonce supprimée"); load(); } };
 
   const actions = (s: Sale) => (
     <div className="flex flex-wrap gap-1.5">
-      <Link to={`/car/${s.id}`} target="_blank" className="btn btn-sm">معاينة</Link>
-      <button className="btn btn-sm" onClick={() => toggle(s)}>{s.sold ? "إلغاء البيع" : "تحديد كمباعة"}</button>
-      <Link to={`/admin/sales/${s.id}/edit`} className="btn btn-sm">تعديل</Link>
-      <button className="btn btn-danger btn-sm" onClick={() => del(s)}>حذف</button>
+      <Link to={`/car/${s.id}`} target="_blank" className="btn btn-sm">Aperçu</Link>
+      <button className="btn btn-sm" onClick={() => toggle(s)}>{s.sold ? "Annuler la vente" : "Marquer vendue"}</button>
+      <Link to={`/admin/sales/${s.id}/edit`} className="btn btn-sm">Modifier</Link>
+      <button className="btn btn-danger btn-sm" onClick={() => del(s)}>Supprimer</button>
     </div>
   );
 
   const statusPill = (s: Sale) => (
-    <span className={`pill ${s.sold ? "bg-dangerbg text-danger" : "bg-okbg text-ok"}`}>{s.sold ? "مباعة" : "متوفرة"}</span>
+    <span className={`pill ${s.sold ? "bg-dangerbg text-danger" : "bg-okbg text-ok"}`}>{s.sold ? "Vendue" : "Disponible"}</span>
   );
 
   return (
     <>
       <PageHead
-        title="سيارات للبيع"
-        subtitle="أضف وعدّل السيارات المعروضة في المعرض العام — وحدّد المباعة منها."
+        title="Voitures à vendre"
+        subtitle="Ajoutez et modifiez les voitures de la vitrine publique — et marquez celles qui sont vendues."
         action={
           <div className="flex flex-wrap gap-2">
-            <a href="/" target="_blank" rel="noreferrer" className="btn">المعرض العام</a>
-            <Link to="/admin/sales/new" className="btn btn-primary">+ إضافة سيارة</Link>
+            <a href="/" target="_blank" rel="noreferrer" className="btn">Vitrine publique</a>
+            <Link to="/admin/sales/new" className="btn btn-primary">+ Ajouter une voiture</Link>
           </div>
         }
       />
       <KpiRow items={kpis} />
 
       {sales.length === 0 ? (
-        <div className="card py-14 text-center text-muted">لا توجد سيارات معروضة للبيع بعد.</div>
+        <div className="card py-14 text-center text-muted">Aucune voiture en vente pour le moment.</div>
       ) : (
         <>
           {/* mobile: cards */}
@@ -85,8 +85,8 @@ export default function SalesAdmin() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] border-collapse text-sm">
                 <thead>
-                  <tr className="bg-line2 text-right text-xs font-bold text-muted">
-                    <Th>الصورة</Th><Th>العنوان</Th><Th>السعر</Th><Th>السنة</Th><Th>الحالة</Th><Th> </Th>
+                  <tr className="bg-line2 text-left text-xs font-bold text-muted">
+                    <Th>Photo</Th><Th>Titre</Th><Th>Prix</Th><Th>Année</Th><Th>Statut</Th><Th> </Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -110,6 +110,6 @@ export default function SalesAdmin() {
   );
 }
 
-const Th = ({ children }: any) => <th className="px-4 py-4 text-right font-bold">{children}</th>;
-const Td = ({ children }: any) => <td className="px-4 py-3.5 text-right align-middle">{children}</td>;
+const Th = ({ children }: any) => <th className="px-4 py-4 text-left font-bold">{children}</th>;
+const Td = ({ children }: any) => <td className="px-4 py-3.5 text-left align-middle">{children}</td>;
 const I = ({ d }: { d: string }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className="h-full w-full"><path d={d} /></svg>;

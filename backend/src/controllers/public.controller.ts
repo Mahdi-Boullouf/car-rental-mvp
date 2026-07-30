@@ -4,7 +4,7 @@ import { AppError } from "../errors/app_error";
 
 async function activeAgencyBySlug(slug: string) {
     const agency = await prisma.agency.findUnique({ where: { slug } });
-    if (!agency || !agency.active) throw new AppError("المعرض غير موجود", 404);
+    if (!agency || !agency.active) throw new AppError("Concession introuvable", 404);
     return agency;
 }
 
@@ -43,7 +43,7 @@ export const getPublicSale = async (req: Request, res: Response, next: NextFunct
     try {
         const agency = await activeAgencyBySlug(req.params.slug);
         const sale = await prisma.saleListing.findFirst({ where: { id: req.params.id, agencyId: agency.id } });
-        if (!sale) throw new AppError("الإعلان غير موجود", 404);
+        if (!sale) throw new AppError("Annonce introuvable", 404);
         res.json({ success: true, data: sale });
     } catch (error) {
         next(error);

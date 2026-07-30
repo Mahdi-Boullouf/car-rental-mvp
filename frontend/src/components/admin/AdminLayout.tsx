@@ -39,13 +39,13 @@ export default function AdminLayout() {
 
   const isSuper = user?.role === "SUPER_ADMIN";
   const ag = user?.agency;
-  const brand = isSuper ? "منصة Master Cars" : ag?.name || "Master Cars";
-  const sub = isSuper ? "الإدارة العامة" : "لوحة الوكالة";
+  const brand = isSuper ? "Plateforme Master Cars" : ag?.name || "Master Cars";
+  const sub = isSuper ? "Administration" : "Espace agence";
 
   return (
     <div className="min-h-screen">
       <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-white px-4 py-2.5 md:hidden">
-        <button className="btn btn-sm" onClick={() => setOpen(true)} aria-label="القائمة">
+        <button className="btn btn-sm" onClick={() => setOpen(true)} aria-label="Menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
         <b>{brand}</b>
@@ -53,7 +53,7 @@ export default function AdminLayout() {
 
       {open && <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={close} />}
 
-      <aside className={`fixed inset-y-0 right-0 z-50 flex w-[264px] flex-col bg-grad-navy p-4 transition-transform md:translate-x-0 ${open ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col bg-grad-navy p-4 transition-transform md:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center gap-3 border-b border-white/10 px-2 pb-4">
           <div className="grid h-11 w-11 place-items-center rounded-[13px] bg-grad-brand text-[15px] font-extrabold text-white shadow-[0_6px_18px_rgba(47,107,255,.45)]">
             {isSuper ? "★" : "MC"}
@@ -66,30 +66,30 @@ export default function AdminLayout() {
 
         {isSuper ? (
           <>
-            <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">الإدارة</div>
+            <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">Administration</div>
             <nav className="flex flex-col gap-1">
-              <Item to="/admin/agencies" icon={ic.agencies} label="الوكالات" onClick={close} />
+              <Item to="/admin/agencies" icon={ic.agencies} label="Agences" onClick={close} />
             </nav>
           </>
         ) : (
           <>
             {ag?.rentalsEnabled && (
               <>
-                <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">التأجير</div>
+                <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">Location</div>
                 <nav className="flex flex-col gap-1">
-                  <Item to="/admin/fleet" icon={ic.fleet} label="الأسطول" onClick={close} />
-                  <Item to="/admin/bookings" icon={ic.bookings} label="الحجوزات" onClick={close} />
+                  <Item to="/admin/fleet" icon={ic.fleet} label="Flotte" onClick={close} />
+                  <Item to="/admin/bookings" icon={ic.bookings} label="Réservations" onClick={close} />
                 </nav>
               </>
             )}
             {ag?.salesEnabled && (
               <>
-                <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">المتجر</div>
+                <div className="px-2.5 pb-2 pt-4 text-[11px] font-bold tracking-wider text-white/40">Boutique</div>
                 <nav className="flex flex-col gap-1">
-                  <Item to="/admin/sales" icon={ic.sales} label="سيارات للبيع" onClick={close} />
-                  <Item to="/admin/settings" icon={ic.settings} label="إعدادات المعرض" onClick={close} />
+                  <Item to="/admin/sales" icon={ic.sales} label="Voitures à vendre" onClick={close} />
+                  <Item to="/admin/settings" icon={ic.settings} label="Paramètres de la vitrine" onClick={close} />
                   <a href={`/${ag.slug}`} target="_blank" rel="noreferrer" className={`${navItem} text-white/60 hover:bg-white/10 hover:text-white`}>
-                    <span className="w-5">{ic.store}</span> المعرض العام
+                    <span className="w-5">{ic.store}</span> Vitrine publique
                   </a>
                 </nav>
               </>
@@ -101,12 +101,12 @@ export default function AdminLayout() {
           <b className="block text-[13px] text-white">{user?.name}</b>
           <span className="text-[12px]">{user?.email}</span>
           <button onClick={doLogout} className="mt-3 w-full rounded-lg bg-white/10 px-3 py-2 text-[13px] font-bold text-white hover:bg-white/20">
-            تسجيل الخروج
+            Déconnexion
           </button>
         </div>
       </aside>
 
-      <main className="px-5 pb-16 pt-6 md:mr-[264px] md:px-9">
+      <main className="px-5 pb-16 pt-6 md:ml-[264px] md:px-9">
         <div className="mx-auto max-w-[1240px]">
           <Outlet />
         </div>

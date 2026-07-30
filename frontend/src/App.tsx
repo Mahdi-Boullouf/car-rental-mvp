@@ -17,7 +17,7 @@ import SettingsAdmin from "./pages/admin/SettingsAdmin";
 
 function Protected({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="grid min-h-screen place-items-center text-muted">جارٍ التحميل…</div>;
+  if (loading) return <div className="grid min-h-screen place-items-center text-muted">Chargement…</div>;
   if (!user) return <Navigate to="/admin/login" replace />;
   return children;
 }

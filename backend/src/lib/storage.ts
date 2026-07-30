@@ -29,7 +29,7 @@ export async function storeFile(file: Express.Multer.File): Promise<string> {
     const { error } = await supabase.storage
         .from(BUCKET)
         .upload(name, file.buffer, { contentType: file.mimetype });
-    if (error) throw new AppError(`فشل رفع الصورة: ${error.message}`, 500);
+    if (error) throw new AppError(`Échec du téléversement de l'image: ${error.message}`, 500);
 
     return supabase.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
 }

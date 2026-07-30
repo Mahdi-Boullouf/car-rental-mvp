@@ -5,8 +5,8 @@ import type { Sale } from "../../types";
 import { Alert, PageHead, Spinner } from "../../components/ui";
 import { useToast } from "../../components/Toast";
 
-const FUELS = ["بنزين", "ديزل", "هجين", "كهرباء"];
-const GEARBOXES = ["أوتوماتيك", "يدوي"];
+const FUELS = ["Essence", "Diesel", "Hybride", "Électrique"];
+const GEARBOXES = ["Automatique", "Manuelle"];
 
 export default function SaleForm() {
   const { id } = useParams();
@@ -17,7 +17,7 @@ export default function SaleForm() {
   const [loading, setLoading] = useState(editing);
   const [f, setF] = useState({
     title: "", brand: "", model: "", year: "", price: "", km: "",
-    fuel: "بنزين", gearbox: "أوتوماتيك", color: "", phone: "", wilaya: "", description: "",
+    fuel: "Essence", gearbox: "Automatique", color: "", phone: "", wilaya: "", description: "",
   });
   const [existing, setExisting] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -29,12 +29,12 @@ export default function SaleForm() {
     api.sale(id).then((s) => {
       setF({
         title: s.title, brand: s.brand || "", model: s.model || "", year: s.year?.toString() || "",
-        price: s.price.toString(), km: s.km?.toString() || "", fuel: s.fuel || "بنزين",
-        gearbox: s.gearbox || "أوتوماتيك", color: s.color || "", phone: s.phone || "",
+        price: s.price.toString(), km: s.km?.toString() || "", fuel: s.fuel || "Essence",
+        gearbox: s.gearbox || "Automatique", color: s.color || "", phone: s.phone || "",
         wilaya: s.wilaya || "", description: s.description || "",
       });
       setExisting(s.images || []);
-    }).catch(() => setErr("تعذّر تحميل الإعلان")).finally(() => setLoading(false));
+    }).catch(() => setErr("Impossible de charger l'annonce")).finally(() => setLoading(false));
   }, [id]);
 
   const up = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
@@ -42,8 +42,8 @@ export default function SaleForm() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setErr("");
-    if (!f.title.trim()) return setErr("عنوان الإعلان مطلوب.");
-    if (!f.price) return setErr("السعر مطلوب.");
+    if (!f.title.trim()) return setErr("Le titre de l'annonce est requis.");
+    if (!f.price) return setErr("Le prix est requis.");
     setBusy(true);
     try {
       let uploaded: string[] = [];
@@ -56,7 +56,7 @@ export default function SaleForm() {
       };
       if (editing) await api.updateSale(id!, payload);
       else await api.createSale(payload);
-      toast(editing ? "✅ تم حفظ التعديلات" : "✅ تمت إضافة السيارة للبيع");
+      toast(editing ? "✅ Modifications enregistrées" : "✅ Voiture mise en vente");
       nav("/admin/sales");
     } catch (e: any) {
       setErr(e.message);
@@ -69,56 +69,56 @@ export default function SaleForm() {
 
   return (
     <>
-      <Link to="/admin/sales" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-muted hover:text-ink">→ رجوع إلى سيارات للبيع</Link>
-      <PageHead title={editing ? "تعديل إعلان" : "إضافة سيارة للبيع"} subtitle="بيانات الإعلان الذي سيظهر في المعرض العام." />
+      <Link to="/admin/sales" className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-muted hover:text-ink">← Retour aux voitures à vendre</Link>
+      <PageHead title={editing ? "Modifier l'annonce" : "Mettre une voiture en vente"} subtitle="Informations de l'annonce affichée dans la vitrine publique." />
 
       <form onSubmit={submit} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.4fr_.9fr]">
         <div className="card p-5 sm:p-6">
-          <div className="mb-5 border-b border-line2 pb-3 text-[15px] font-extrabold">بيانات الإعلان</div>
+          <div className="mb-5 border-b border-line2 pb-3 text-[15px] font-extrabold">Informations de l'annonce</div>
 
-          <label className="label">عنوان الإعلان</label>
-          <input className="input" value={f.title} onChange={up("title")} placeholder="Volkswagen Tiguan 2020 بحالة ممتازة" />
+          <label className="label">Titre de l'annonce</label>
+          <input className="input" value={f.title} onChange={up("title")} placeholder="Volkswagen Tiguan 2020 en excellent état" />
 
           <Grid3>
-            <Fld l="الماركة"><input className="input" value={f.brand} onChange={up("brand")} placeholder="Volkswagen" /></Fld>
-            <Fld l="الموديل"><input className="input" value={f.model} onChange={up("model")} placeholder="Tiguan" /></Fld>
-            <Fld l="السنة"><input className="input" type="number" value={f.year} onChange={up("year")} placeholder="2020" /></Fld>
+            <Fld l="Marque"><input className="input" value={f.brand} onChange={up("brand")} placeholder="Volkswagen" /></Fld>
+            <Fld l="Modèle"><input className="input" value={f.model} onChange={up("model")} placeholder="Tiguan" /></Fld>
+            <Fld l="Année"><input className="input" type="number" value={f.year} onChange={up("year")} placeholder="2020" /></Fld>
           </Grid3>
           <Grid3>
-            <Fld l="السعر (دج)"><input className="input" type="number" value={f.price} onChange={up("price")} placeholder="4800000" /></Fld>
-            <Fld l="الكيلومتراج"><input className="input" type="number" value={f.km} onChange={up("km")} placeholder="52000" /></Fld>
-            <Fld l="اللون"><input className="input" value={f.color} onChange={up("color")} placeholder="أبيض" /></Fld>
+            <Fld l="Prix (DA)"><input className="input" type="number" value={f.price} onChange={up("price")} placeholder="4800000" /></Fld>
+            <Fld l="Kilométrage"><input className="input" type="number" value={f.km} onChange={up("km")} placeholder="52000" /></Fld>
+            <Fld l="Couleur"><input className="input" value={f.color} onChange={up("color")} placeholder="Blanc" /></Fld>
           </Grid3>
           <Grid3>
-            <Fld l="نوع الوقود"><select className="input" value={f.fuel} onChange={up("fuel")}>{FUELS.map((x) => <option key={x}>{x}</option>)}</select></Fld>
-            <Fld l="ناقل الحركة"><select className="input" value={f.gearbox} onChange={up("gearbox")}>{GEARBOXES.map((x) => <option key={x}>{x}</option>)}</select></Fld>
-            <Fld l="الولاية"><input className="input" value={f.wilaya} onChange={up("wilaya")} placeholder="الجزائر العاصمة" /></Fld>
+            <Fld l="Carburant"><select className="input" value={f.fuel} onChange={up("fuel")}>{FUELS.map((x) => <option key={x}>{x}</option>)}</select></Fld>
+            <Fld l="Boîte de vitesses"><select className="input" value={f.gearbox} onChange={up("gearbox")}>{GEARBOXES.map((x) => <option key={x}>{x}</option>)}</select></Fld>
+            <Fld l="Wilaya"><input className="input" value={f.wilaya} onChange={up("wilaya")} placeholder="Alger" /></Fld>
           </Grid3>
 
-          <label className="label mt-4">رقم الهاتف للتواصل</label>
+          <label className="label mt-4">Téléphone de contact</label>
           <input className="input" value={f.phone} onChange={up("phone")} placeholder="05XX XX XX XX" />
 
-          <label className="label mt-4">الوصف</label>
-          <textarea className="input min-h-[96px]" value={f.description} onChange={up("description")} placeholder="حالة السيارة، التجهيزات، الصيانة…" />
+          <label className="label mt-4">Description</label>
+          <textarea className="input min-h-[96px]" value={f.description} onChange={up("description")} placeholder="État du véhicule, équipements, entretien…" />
 
           {err && <Alert>{err}</Alert>}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <button className="btn btn-primary sm:flex-1" disabled={busy}>{busy ? "جارٍ الحفظ…" : editing ? "حفظ التعديلات" : "نشر الإعلان"}</button>
-            <Link to="/admin/sales" className="btn">إلغاء</Link>
+            <button className="btn btn-primary sm:flex-1" disabled={busy}>{busy ? "Enregistrement…" : editing ? "Enregistrer" : "Publier l'annonce"}</button>
+            <Link to="/admin/sales" className="btn">Annuler</Link>
           </div>
         </div>
 
         <div className="card p-5 sm:p-6">
-          <div className="mb-4 text-[15px] font-extrabold">صور السيارة</div>
+          <div className="mb-4 text-[15px] font-extrabold">Photos de la voiture</div>
           <label className="btn mb-3 w-full cursor-pointer">
-            + إضافة صور
+            + Ajouter des photos
             <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => setFiles([...files, ...Array.from(e.target.files || [])])} />
           </label>
           <div className="grid grid-cols-3 gap-2.5">
             {existing.map((p, i) => <Thumb key={"e" + i} src={imgUrl(p)} onRemove={() => setExisting(existing.filter((_, j) => j !== i))} />)}
             {files.map((file, i) => <Thumb key={"f" + i} src={URL.createObjectURL(file)} onRemove={() => setFiles(files.filter((_, j) => j !== i))} />)}
           </div>
-          {existing.length + files.length === 0 && <p className="mt-2 text-sm text-muted">لم تتم إضافة صور بعد.</p>}
+          {existing.length + files.length === 0 && <p className="mt-2 text-sm text-muted">Aucune photo ajoutée.</p>}
         </div>
       </form>
     </>

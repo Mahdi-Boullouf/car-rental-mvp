@@ -8,11 +8,7 @@ build/
 **/dist/
 
 # env / secrets (examples are committed)
-.env
-.env.*
 !.env.example
-**/.env
-**/.env.*
 !**/.env.example
 
 # runtime uploads (seed images live in backend/prisma/seed-assets)
@@ -28,8 +24,8 @@ yarn-error.log*
 # os / editor
 .DS_Store
 .idea/
-.vscode/
 *.swp
 
 # local build artifacts
 frontend/dist.zip
+config.bat

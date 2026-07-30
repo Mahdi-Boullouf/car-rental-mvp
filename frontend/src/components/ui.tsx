@@ -37,7 +37,7 @@ export function KpiRow({ items }: { items: { n: ReactNode; l: string; c: keyof t
   );
 }
 
-export function Spinner({ label = "جارٍ التحميل…" }: { label?: string }) {
+export function Spinner({ label = "Chargement…" }: { label?: string }) {
   return <div className="grid place-items-center py-20 text-muted">{label}</div>;
 }
 

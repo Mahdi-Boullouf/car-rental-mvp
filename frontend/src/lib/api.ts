@@ -42,11 +42,11 @@ async function req<T>(path: string, opts: Omit<RequestInit, "body"> & { body?: a
     } catch {
       // Not JSON — almost always the SPA's own index.html, meaning VITE_API_URL
       // was empty at build time so /api/* resolved against the frontend origin.
-      throw new Error(`الخادم لم يُرجع JSON (${res.status}) — تحقق من إعداد VITE_API_URL.`);
+      throw new Error(`Le serveur n'a pas renvoyé de JSON (${res.status}) — vérifiez VITE_API_URL.`);
     }
   }
   if (!res.ok || json.success === false) {
-    throw new Error(json.message || `حدث خطأ (${res.status})، حاول مرة أخرى`);
+    throw new Error(json.message || `Une erreur est survenue (${res.status}), réessayez`);
   }
   return json.data as T;
 }

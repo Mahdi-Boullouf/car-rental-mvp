@@ -20,23 +20,23 @@ function copySeedImages() {
 }
 
 const CARS = [
-    { name: "Range Rover Evoque", bodyType: "SUV فاخر", year: 2022, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 18000, image: img("evoque") },
-    { name: "BMW X3", bodyType: "SUV فاخر", year: 2023, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 16000, image: img("x3") },
-    { name: "Audi Q5", bodyType: "SUV فاخر", year: 2022, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 15000, image: img("q5") },
-    { name: "Volkswagen Tiguan", bodyType: "SUV عائلي", year: 2023, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 11000, image: img("tiguan") },
-    { name: "Hyundai Tucson", bodyType: "SUV عائلي", year: 2022, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 10000, image: img("tucson") },
-    { name: "Volkswagen T-Roc", bodyType: "SUV مدمج", year: 2023, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 9000, image: img("troc") },
-    { name: "Volkswagen Golf 8", bodyType: "هاتشباك", year: 2022, fuel: "بنزين", transmission: "أوتوماتيك", seats: 5, pricePerDay: 7500, image: img("golf") },
-    { name: "Dacia Duster", bodyType: "SUV اقتصادي", year: 2022, fuel: "ديزل", transmission: "يدوي", seats: 5, pricePerDay: 6500, image: img("duster") },
+    { name: "Range Rover Evoque", bodyType: "SUV de luxe", year: 2022, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 18000, image: img("evoque") },
+    { name: "BMW X3", bodyType: "SUV de luxe", year: 2023, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 16000, image: img("x3") },
+    { name: "Audi Q5", bodyType: "SUV de luxe", year: 2022, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 15000, image: img("q5") },
+    { name: "Volkswagen Tiguan", bodyType: "SUV familial", year: 2023, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 11000, image: img("tiguan") },
+    { name: "Hyundai Tucson", bodyType: "SUV familial", year: 2022, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 10000, image: img("tucson") },
+    { name: "Volkswagen T-Roc", bodyType: "SUV compact", year: 2023, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 9000, image: img("troc") },
+    { name: "Volkswagen Golf 8", bodyType: "Citadine", year: 2022, fuel: "Essence", transmission: "Automatique", seats: 5, pricePerDay: 7500, image: img("golf") },
+    { name: "Dacia Duster", bodyType: "SUV économique", year: 2022, fuel: "Diesel", transmission: "Manuelle", seats: 5, pricePerDay: 6500, image: img("duster") },
 ];
 
 const SALES = [
-    { title: "Volkswagen Tiguan 2020", brand: "Volkswagen", model: "Tiguan", year: 2020, price: 4800000, km: 52000, fuel: "بنزين", gearbox: "أوتوماتيك", color: "أبيض", phone: "0555 12 34 56", wilaya: "الجزائر العاصمة", description: "سيارة بحالة ممتازة، صيانة دورية بالوكالة، إطارات جديدة، لا تحتاج أي مصاريف.", images: [img("tiguan")], sold: false },
-    { title: "Volkswagen Golf 8 2021", brand: "Volkswagen", model: "Golf 8", year: 2021, price: 4200000, km: 31000, fuel: "بنزين", gearbox: "أوتوماتيك", color: "رمادي", phone: "0661 22 33 44", wilaya: "وهران", description: "قولف 8 نسخة كاملة، شاشة رقمية، حالة الوكالة، أول مالك.", images: [img("golf")], sold: false },
-    { title: "BMW X3 xDrive 2020", brand: "BMW", model: "X3", year: 2020, price: 9500000, km: 48000, fuel: "بنزين", gearbox: "أوتوماتيك", color: "أزرق", phone: "0770 55 66 77", wilaya: "قسنطينة", description: "BMW X3 دفع رباعي، تجهيزات كاملة، مقاعد جلد، فتحة سقف بانورامية.", images: [img("x3")], sold: false },
-    { title: "Dacia Duster 2019", brand: "Dacia", model: "Duster", year: 2019, price: 2700000, km: 73000, fuel: "ديزل", gearbox: "يدوي", color: "بني", phone: "0555 88 99 00", wilaya: "سطيف", description: "داسيا داستر ديزل اقتصادية، مناسبة للطرقات، صيانة حديثة.", images: [img("duster")], sold: true },
-    { title: "Hyundai Tucson 2021", brand: "Hyundai", model: "Tucson", year: 2021, price: 4600000, km: 38000, fuel: "بنزين", gearbox: "أوتوماتيك", color: "أبيض", phone: "0661 11 22 33", wilaya: "عنابة", description: "توسان الجيل الجديد، تصميم عصري، حالة ممتازة، فل أوبسيون.", images: [img("tucson")], sold: false },
-    { title: "Audi Q5 2019", brand: "Audi", model: "Q5", year: 2019, price: 7800000, km: 56000, fuel: "بنزين", gearbox: "أوتوماتيك", color: "فضي", phone: "0770 44 55 66", wilaya: "البليدة", description: "أودي Q5 كواترو، فل أوبسيون، صيانة بالوكالة، بحالة الجديدة.", images: [img("q5")], sold: false },
+    { title: "Volkswagen Tiguan 2020", brand: "Volkswagen", model: "Tiguan", year: 2020, price: 4800000, km: 52000, fuel: "Essence", gearbox: "Automatique", color: "Blanc", phone: "0555 12 34 56", wilaya: "Alger", description: "Voiture en excellent état, entretien régulier en concession, pneus neufs, aucuns frais à prévoir.", images: [img("tiguan")], sold: false },
+    { title: "Volkswagen Golf 8 2021", brand: "Volkswagen", model: "Golf 8", year: 2021, price: 4200000, km: 31000, fuel: "Essence", gearbox: "Automatique", color: "Gris", phone: "0661 22 33 44", wilaya: "Oran", description: "Golf 8 finition complète, écran numérique, état concession, première main.", images: [img("golf")], sold: false },
+    { title: "BMW X3 xDrive 2020", brand: "BMW", model: "X3", year: 2020, price: 9500000, km: 48000, fuel: "Essence", gearbox: "Automatique", color: "Bleu", phone: "0770 55 66 77", wilaya: "Constantine", description: "BMW X3 4x4, finition complète, sièges cuir, toit ouvrant panoramique.", images: [img("x3")], sold: false },
+    { title: "Dacia Duster 2019", brand: "Dacia", model: "Duster", year: 2019, price: 2700000, km: 73000, fuel: "Diesel", gearbox: "Manuelle", color: "Marron", phone: "0555 88 99 00", wilaya: "Sétif", description: "Dacia Duster Diesel économique, idéale pour la route, entretien récent.", images: [img("duster")], sold: true },
+    { title: "Hyundai Tucson 2021", brand: "Hyundai", model: "Tucson", year: 2021, price: 4600000, km: 38000, fuel: "Essence", gearbox: "Automatique", color: "Blanc", phone: "0661 11 22 33", wilaya: "Annaba", description: "Tucson nouvelle génération, design moderne, excellent état, full options.", images: [img("tucson")], sold: false },
+    { title: "Audi Q5 2019", brand: "Audi", model: "Q5", year: 2019, price: 7800000, km: 56000, fuel: "Essence", gearbox: "Automatique", color: "Gris argent", phone: "0770 44 55 66", wilaya: "Blida", description: "Audi Q5 Quattro, full options, entretien en concession, comme neuve.", images: [img("q5")], sold: false },
 ];
 
 async function main() {
@@ -55,21 +55,21 @@ async function main() {
     const superEmail = (process.env.SUPER_EMAIL || "super@mastercars.dz").toLowerCase();
     if (!(await prisma.user.findUnique({ where: { email: superEmail } }))) {
         const password = await bcrypt.hash(process.env.SUPER_PASSWORD || "super123", 10);
-        await prisma.user.create({ data: { name: "مدير المنصة", email: superEmail, password, role: "SUPER_ADMIN" } });
+        await prisma.user.create({ data: { name: "Administrateur", email: superEmail, password, role: "SUPER_ADMIN" } });
     }
 
     // Demo agency (tenant) + its owner + demo data.
     let agency = await prisma.agency.findUnique({ where: { slug: "master-cars" } });
     if (!agency) {
         agency = await prisma.agency.create({
-            data: { name: "Master Cars", slug: "master-cars", city: "الجزائر", phone: "05 00 00 00 00", rentalsEnabled: true, salesEnabled: true },
+            data: { name: "Master Cars", slug: "master-cars", city: "Alger", phone: "05 00 00 00 00", rentalsEnabled: true, salesEnabled: true },
         });
     }
 
     const ownerEmail = (process.env.ADMIN_EMAIL || "admin@mastercars.dz").toLowerCase();
     if (!(await prisma.user.findUnique({ where: { email: ownerEmail } }))) {
         const password = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
-        await prisma.user.create({ data: { name: "مالك الوكالة", email: ownerEmail, password, role: "OWNER", agencyId: agency.id } });
+        await prisma.user.create({ data: { name: "Propriétaire", email: ownerEmail, password, role: "OWNER", agencyId: agency.id } });
     }
 
     if ((await prisma.car.count({ where: { agencyId: agency.id } })) === 0)

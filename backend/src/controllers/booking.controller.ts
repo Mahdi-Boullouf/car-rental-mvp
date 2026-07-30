@@ -39,7 +39,7 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
 
         const start = new Date(startDate);
         const end = new Date(endDate);
-        if (end < start) throw new AppError("تاريخ النهاية قبل تاريخ البداية", 400);
+        if (end < start) throw new AppError("La date de fin précède la date de début", 400);
 
         // Car must belong to this agency.
         const car = await prisma.car.findFirst({ where: { id: carId, agencyId: req.agencyId } });
@@ -50,7 +50,7 @@ export const createBooking = async (req: Request, res: Response, next: NextFunct
         });
         if (conflict) {
             throw new AppError(
-                `هذه السيارة محجوزة بالفعل من ${fmt(conflict.startDate)} إلى ${fmt(conflict.endDate)} باسم ${conflict.customer}`,
+                `Cette voiture est déjà réservée du ${fmt(conflict.startDate)} au ${fmt(conflict.endDate)} au nom de ${conflict.customer}`,
                 409
             );
         }

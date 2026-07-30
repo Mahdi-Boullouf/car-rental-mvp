@@ -22,7 +22,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         // Agency owners/agents can't log in if their agency is suspended.
         if (user.agencyId) {
             const agency = await prisma.agency.findUnique({ where: { id: user.agencyId } });
-            if (!agency || !agency.active) throw new AppError("الوكالة موقوفة، يرجى التواصل مع الإدارة", 403);
+            if (!agency || !agency.active) throw new AppError("Agence suspendue, veuillez contacter l'administration", 403);
         }
 
         const token = jwt.sign(

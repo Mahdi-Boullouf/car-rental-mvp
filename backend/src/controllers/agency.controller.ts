@@ -6,14 +6,14 @@ import { AppError } from "../errors/app_error";
 
 export const createAgencySchema = z.object({
     name: z.string().min(1),
-    slug: z.string().regex(/^[a-z0-9-]+$/, "أحرف إنجليزية صغيرة وأرقام وشرطات فقط"),
+    slug: z.string().regex(/^[a-z0-9-]+$/, "Lettres minuscules, chiffres et tirets uniquement"),
     phone: z.string().optional().default(""),
     city: z.string().optional().default(""),
     rentalsEnabled: z.boolean().optional().default(true),
     salesEnabled: z.boolean().optional().default(true),
     ownerName: z.string().min(1),
-    ownerEmail: z.string().regex(/^\S+@\S+\.\S+$/, "بريد غير صحيح"),
-    ownerPassword: z.string().min(6, "كلمة المرور 6 أحرف على الأقل"),
+    ownerEmail: z.string().regex(/^\S+@\S+\.\S+$/, "E-mail invalide"),
+    ownerPassword: z.string().min(6, "Mot de passe : 6 caractères minimum"),
 });
 
 export const updateAgencySchema = z
@@ -56,9 +56,9 @@ export const createAgency = async (req: Request, res: Response, next: NextFuncti
     try {
         const b = req.body as z.infer<typeof createAgencySchema>;
         if (await prisma.agency.findUnique({ where: { slug: b.slug } }))
-            throw new AppError("هذا الرابط (slug) مستخدم مسبقاً", 409);
+            throw new AppError("Ce lien (slug) est déjà utilisé", 409);
         if (await prisma.user.findUnique({ where: { email: b.ownerEmail.toLowerCase() } }))
-            throw new AppError("هذا البريد مسجّل مسبقاً", 409);
+            throw new AppError("Cet e-mail est déjà enregistré", 409);
 
         const password = await bcrypt.hash(b.ownerPassword, 10);
         const agency = await prisma.$transaction(async (tx) => {
@@ -84,7 +84,7 @@ export const createAgency = async (req: Request, res: Response, next: NextFuncti
 export const updateAgency = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const existing = await prisma.agency.findUnique({ where: { id: req.params.id } });
-        if (!existing) throw new AppError("الوكالة غير موجودة", 404);
+        if (!existing) throw new AppError("Agence introuvable", 404);
         const agency = await prisma.agency.update({ where: { id: existing.id }, data: req.body });
         res.json({ success: true, data: agency });
     } catch (error) {
@@ -95,7 +95,7 @@ export const updateAgency = async (req: Request, res: Response, next: NextFuncti
 export const deleteAgency = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const existing = await prisma.agency.findUnique({ where: { id: req.params.id } });
-        if (!existing) throw new AppError("الوكالة غير موجودة", 404);
+        if (!existing) throw new AppError("Agence introuvable", 404);
         await prisma.agency.delete({ where: { id: existing.id } }); // cascades users/cars/sales/settings
         res.json({ success: true, message: "Agency deleted" });
     } catch (error) {

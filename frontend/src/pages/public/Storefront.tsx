@@ -40,7 +40,7 @@ export default function Storefront() {
     return (
       <div className="min-h-screen">
         <PublicHeader />
-        <div className="mx-auto max-w-[1180px] px-5 py-24 text-center text-muted">هذا المعرض غير موجود أو موقوف.</div>
+        <div className="mx-auto max-w-[1180px] px-5 py-24 text-center text-muted">Cette concession est introuvable ou suspendue.</div>
       </div>
     );
 
@@ -55,7 +55,7 @@ export default function Storefront() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
             <div className="absolute bottom-0 p-6 md:p-8">
               <h1 className="text-3xl font-extrabold text-white md:text-4xl">{agency?.name}</h1>
-              <p className="mt-1 text-white/85">{available} سيارة متوفرة للبيع</p>
+              <p className="mt-1 text-white/85">{available} voiture(s) à vendre</p>
             </div>
           </div>
         </div>
@@ -64,33 +64,33 @@ export default function Storefront() {
       <main className="mx-auto max-w-[1180px] px-4 pb-20 pt-6 md:px-6 md:pt-8">
         {!cover && (
           <div className="mb-6">
-            <h1 className="text-[30px] font-extrabold tracking-tight md:text-[38px]">{agency?.name || "سيارات للبيع"}</h1>
-            <p className="mt-1 text-muted">{available} سيارة متوفرة للبيع{agency?.city ? ` · ${agency.city}` : ""}</p>
+            <h1 className="text-[30px] font-extrabold tracking-tight md:text-[38px]">{agency?.name || "Voitures à vendre"}</h1>
+            <p className="mt-1 text-muted">{available} voiture(s) à vendre{agency?.city ? ` · ${agency.city}` : ""}</p>
           </div>
         )}
 
         <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-line bg-white p-3 shadow-soft md:flex-row md:items-center">
           <div className="relative flex-1">
             <svg className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4-4" /></svg>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ابحث بالاسم أو الولاية…"
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher par nom ou wilaya…"
               className="w-full rounded-xl border border-line bg-[#f7f8fa] py-2.5 ps-11 pe-3 text-[15px] outline-none transition focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(47,107,255,.14)]" />
           </div>
           <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5">
-            <Pill active={fuel === "all"} onClick={() => setFuel("all")}>الكل</Pill>
+            <Pill active={fuel === "all"} onClick={() => setFuel("all")}>Tous</Pill>
             {fuels.map((f) => <Pill key={f} active={fuel === f} onClick={() => setFuel(f)}>{f}</Pill>)}
           </div>
           <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}
             className="rounded-xl border border-line bg-[#f7f8fa] px-3 py-2.5 text-sm font-semibold text-ink2 outline-none focus:border-brand">
-            <option value="recent">الأحدث</option>
-            <option value="price_asc">السعر: الأقل أولاً</option>
-            <option value="price_desc">السعر: الأعلى أولاً</option>
+            <option value="recent">Plus récentes</option>
+            <option value="price_asc">Prix : croissant</option>
+            <option value="price_desc">Prix : décroissant</option>
           </select>
         </div>
 
         {sales === null ? (
           <Grid>{Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}</Grid>
         ) : list.length === 0 ? (
-          <div className="rounded-2xl border border-line bg-white py-20 text-center text-muted">لا توجد سيارات معروضة حالياً.</div>
+          <div className="rounded-2xl border border-line bg-white py-20 text-center text-muted">Aucune voiture disponible pour le moment.</div>
         ) : (
           <Grid>{list.map((s, i) => <CarCard key={s.id} sale={s} slug={slug!} index={i} />)}</Grid>
         )}
@@ -112,13 +112,13 @@ function CarCard({ sale: s, slug, index }: { sale: Sale; slug: string; index: nu
         {s.images[0] ? (
           <img src={imgUrl(s.images[0])} alt={s.title} loading="lazy"
             className={`h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${s.sold ? "grayscale-[.6] brightness-90" : ""}`} />
-        ) : <div className="grid h-full w-full place-items-center text-sm text-muted">لا توجد صورة</div>}
-        {s.sold && <span className="absolute start-3 top-3 rounded-lg bg-ink/85 px-3 py-1 text-xs font-bold text-white backdrop-blur">مباعة</span>}
+        ) : <div className="grid h-full w-full place-items-center text-sm text-muted">Aucune photo</div>}
+        {s.sold && <span className="absolute start-3 top-3 rounded-lg bg-ink/85 px-3 py-1 text-xs font-bold text-white backdrop-blur">Vendue</span>}
       </div>
       <div className="p-4">
         <h3 className="line-clamp-1 text-[15.5px] font-bold leading-snug">{s.title}</h3>
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted">
-          {[s.year, s.km != null ? `${nf(s.km)} كم` : null, s.fuel, s.gearbox].filter(Boolean).map((t, i, arr) => (
+          {[s.year, s.km != null ? `${nf(s.km)} km` : null, s.fuel, s.gearbox].filter(Boolean).map((t, i, arr) => (
             <span key={i} className="flex items-center gap-2">{t}{i < arr.length - 1 && <span className="text-line">•</span>}</span>
           ))}
         </div>
@@ -126,7 +126,7 @@ function CarCard({ sale: s, slug, index }: { sale: Sale; slug: string; index: nu
           <div className="text-lg font-extrabold text-ink">{money(s.price)}</div>
           <span className="flex items-center gap-1 text-[12.5px] text-muted">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-6.3-7-11a7 7 0 0114 0c0 4.7-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-            {s.wilaya || "الجزائر"}
+            {s.wilaya || "Algérie"}
           </span>
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function Login() {
       await login(email.trim(), password);
       nav("/admin");
     } catch (e: any) {
-      setErr(e.message || "فشل تسجيل الدخول");
+      setErr(e.message || "Échec de la connexion");
     } finally {
       setBusy(false);
     }
@@ -33,16 +33,16 @@ export default function Login() {
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-grad-brand text-lg font-extrabold text-white shadow-[0_10px_26px_rgba(47,107,255,.45)]">MC</div>
           <div>
             <h1 className="text-xl font-extrabold">Master Cars</h1>
-            <p className="text-sm text-muted">لوحة التحكم — تسجيل الدخول</p>
+            <p className="text-sm text-muted">Tableau de bord — Connexion</p>
           </div>
         </div>
         <form onSubmit={submit} className="card p-6">
-          <label className="label" htmlFor="email">البريد الإلكتروني</label>
+          <label className="label" htmlFor="email">E-mail</label>
           <input id="email" className="input mb-4" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" required />
-          <label className="label" htmlFor="pw">كلمة المرور</label>
+          <label className="label" htmlFor="pw">Mot de passe</label>
           <input id="pw" className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" placeholder="••••••••" required />
           {err && <div className="mt-4 rounded-xl border border-[#f6c9d3] bg-dangerbg px-4 py-3 text-sm text-[#9f1239]">{err}</div>}
-          <button className="btn btn-primary mt-6 w-full" disabled={busy}>{busy ? "جارٍ الدخول…" : "دخول"}</button>
+          <button className="btn btn-primary mt-6 w-full" disabled={busy}>{busy ? "Connexion…" : "Se connecter"}</button>
         </form>
       </div>
     </div>

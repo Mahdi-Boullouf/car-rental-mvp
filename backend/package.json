@@ -1,12 +1,12 @@
 {
   "name": "master-cars-api",
   "version": "1.0.0",
-  "description": "Master Cars — multi-tenant rental + sales API (Express + Prisma + PostgreSQL)",
+  "description": "Master Cars \u2014 multi-tenant rental + sales API (Express + Prisma + PostgreSQL)",
   "main": "dist/main.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
-    "build": "prisma generate && tsc",
-    "start": "node dist/main.js",
+    "dev": "node init && ts-node-dev --respawn --transpile-only src/main.ts",
+    "build": "node init && prisma generate && tsc",
+    "start": "node init && node dist/main.js",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "setup": "prisma generate && tsc && prisma migrate deploy && ts-node --transpile-only prisma/seed.ts",

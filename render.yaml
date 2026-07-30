@@ -5,7 +5,9 @@ services:
     runtime: node
     rootDir: backend
     plan: free
-    buildCommand: npm install && npm run build
+    # `setup` = generate + tsc + migrate deploy + seed. Migrations have to run
+    # here: the free plan gives no shell to run them by hand. Seed is idempotent.
+    buildCommand: npm install && npm run setup
     startCommand: npm start
     healthCheckPath: /
     envVars:
@@ -14,6 +16,10 @@ services:
       - key: JWT
         generateValue: true
       - key: CLIENT_ORIGIN # the static site URL, for CORS
+        sync: false
+      - key: SUPABASE_URL # https://<project>.supabase.co
+        sync: false
+      - key: SUPABASE_SERVICE_KEY # service_role key — server-side only, never in the frontend
         sync: false
 
   # Vite SPA. Static = CDN-served, no cold start, always instant.

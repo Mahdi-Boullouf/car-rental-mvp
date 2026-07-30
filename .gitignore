@@ -30,3 +30,6 @@ yarn-error.log*
 .idea/
 .vscode/
 *.swp
+
+# local build artifacts
+frontend/dist.zip

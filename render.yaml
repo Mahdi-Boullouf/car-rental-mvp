@@ -1,0 +1,33 @@
+services:
+  # Express API. Free plan sleeps after 15 min idle (~50s cold start on next hit).
+  - type: web
+    name: master-cars-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL # Supabase connection string — paste in dashboard
+        sync: false
+      - key: JWT
+        generateValue: true
+      - key: CLIENT_ORIGIN # the static site URL, for CORS
+        sync: false
+
+  # Vite SPA. Static = CDN-served, no cold start, always instant.
+  - type: web
+    name: master-cars-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL # the API service URL
+        sync: false
+    routes:
+      # ponytail: SPA fallback so /:slug and /admin/* resolve client-side
+      - type: rewrite
+        source: /*
+        destination: /index.html

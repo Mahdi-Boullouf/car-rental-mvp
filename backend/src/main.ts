@@ -9,7 +9,15 @@ import { errorMiddleware } from "./middlewares/error";
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || true }));
+// A browser's Origin header never carries a trailing slash, but a URL pasted into
+// a dashboard env var usually does — cors() compares them as strings and rejects
+// the match. Normalize, and accept a comma-separated list for multiple frontends.
+const allowedOrigins = (process.env.CLIENT_ORIGIN || "")
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins.length ? allowedOrigins : true }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 

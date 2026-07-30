@@ -6,6 +6,13 @@ const RAW = ((import.meta.env.VITE_API_URL as string) || "").trim().replace(/\/$
 const ORIGIN = RAW && !/^https?:\/\//i.test(RAW) ? `https://${RAW}` : RAW;
 const BASE = ORIGIN + "/api";
 
+// In a production build an empty VITE_API_URL means every request silently hits
+// the static site instead of the API. Fail loudly in the console rather than
+// surfacing as an undefined response deep in a component.
+if (import.meta.env.PROD && !RAW) {
+  console.error("VITE_API_URL is not set — API calls will hit the frontend origin and fail.");
+}
+
 const TOKEN_KEY = "mc_token";
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t: string | null) =>
@@ -27,9 +34,19 @@ async function req<T>(path: string, opts: Omit<RequestInit, "body"> & { body?: a
     headers,
     body: opts.body && !isForm ? JSON.stringify(opts.body) : opts.body,
   });
-  const json = await res.json().catch(() => ({}));
+  const raw = await res.text();
+  let json: any = {};
+  if (raw) {
+    try {
+      json = JSON.parse(raw);
+    } catch {
+      // Not JSON — almost always the SPA's own index.html, meaning VITE_API_URL
+      // was empty at build time so /api/* resolved against the frontend origin.
+      throw new Error(`الخادم لم يُرجع JSON (${res.status}) — تحقق من إعداد VITE_API_URL.`);
+    }
+  }
   if (!res.ok || json.success === false) {
-    throw new Error(json.message || "حدث خطأ، حاول مرة أخرى");
+    throw new Error(json.message || `حدث خطأ (${res.status})، حاول مرة أخرى`);
   }
   return json.data as T;
 }

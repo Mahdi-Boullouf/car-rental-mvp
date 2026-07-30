@@ -17,7 +17,6 @@ export default function PublicHeader({ name, logo, slug }: { name?: string; logo
           </>
         )}
       </Link>
-      <Link to="/admin" className="btn btn-sm">لوحة التحكم</Link>
     </header>
   );
 }

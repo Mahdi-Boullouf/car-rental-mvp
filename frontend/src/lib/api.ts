@@ -11,8 +11,9 @@ export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t: string | null) =>
   t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY);
 
-/** Resolve a stored /uploads/... path to a full URL. */
-export const imgUrl = (p?: string) => (p ? ORIGIN + p : "");
+/** Resolve a stored image path to a full URL. Supabase Storage returns absolute
+ *  URLs already; local /uploads/... paths get the API origin prepended. */
+export const imgUrl = (p?: string) => (!p ? "" : /^https?:\/\//i.test(p) ? p : ORIGIN + p);
 
 async function req<T>(path: string, opts: Omit<RequestInit, "body"> & { body?: any } = {}): Promise<T> {
   const isForm = opts.body instanceof FormData;

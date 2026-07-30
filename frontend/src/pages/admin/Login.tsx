@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function Login() {
   const { user, login } = useAuth();
   const nav = useNavigate();
-  const [email, setEmail] = useState("admin@mastercars.dz");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -43,7 +43,6 @@ export default function Login() {
           <input id="pw" className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" placeholder="••••••••" required />
           {err && <div className="mt-4 rounded-xl border border-[#f6c9d3] bg-dangerbg px-4 py-3 text-sm text-[#9f1239]">{err}</div>}
           <button className="btn btn-primary mt-6 w-full" disabled={busy}>{busy ? "جارٍ الدخول…" : "دخول"}</button>
-          <p className="mt-4 text-center text-xs text-muted">تجريبي: admin@mastercars.dz / admin123</p>
         </form>
       </div>
     </div>

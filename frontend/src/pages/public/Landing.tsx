@@ -10,7 +10,6 @@ export default function Landing() {
         <div className="mt-6 flex justify-center gap-3">
           <Link to="/admin/login" className="btn btn-primary">لوحة التحكم</Link>
         </div>
-        <p className="mt-6 text-xs text-muted">تجريبي: super@mastercars.dz للإدارة، أو admin@mastercars.dz لوكالة.</p>
       </div>
     </div>
   );
